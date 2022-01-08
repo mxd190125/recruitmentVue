@@ -88,7 +88,12 @@
             >
             </el-option>
           </el-select>
-          <el-select v-model="num" filterable placeholder="招聘人数">
+          <el-select
+            v-model="num"
+            filterable
+            placeholder="招聘人数"
+            class="select-class"
+          >
             <el-option
               v-for="item in nums"
               :key="item.value"
@@ -138,9 +143,9 @@ export default {
         {
           value: "600",
           label: "600人",
-        }
+        },
       ],
-      num: '',
+      num: "",
       citcities: [
         {
           value: "Beijing",
@@ -165,7 +170,7 @@ export default {
         {
           value: "Guangzhou",
           label: "广州",
-        }
+        },
       ],
       city: [],
       recruitTypes: [

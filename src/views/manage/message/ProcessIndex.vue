@@ -1,19 +1,50 @@
 <template>
   <div id="process-index-id">
-      <h2>这是流程处理</h2>
+    <el-tabs v-model="activeName" type="card" @tab-click="handleClick">
+      <el-tab-pane name="resume">
+        <span slot="label"><i class="el-icon-document"></i>简历处理</span>
+        <resume-process/>
+      </el-tab-pane>
+      <el-tab-pane name="exam">
+        <span slot="label"><i class="el-icon-edit"></i> 笔试处理</span>
+        <exam-process/>
+      </el-tab-pane>
+      <el-tab-pane name="interview">
+        <span slot="label"><i class="el-icon-s-opportunity"></i> 面试安排</span>
+        <interview-process/>
+      </el-tab-pane>
+      <el-tab-pane name="last">
+        <span slot="label"><i class="el-icon-finished"></i> 流程结束</span>
+        <last-process/>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
 <script>
+import ExamProcess from './exam/ExamProcess.vue';
+import InterviewProcess from './interview/InterviewProcess.vue';
+import ResumeProcess from './resume/ResumeProcess.vue';
+import LastProcess from './last/LastProcess.vue';
+
 export default {
-  name: 'ProcessIndex',
+  components: { ResumeProcess, ExamProcess, InterviewProcess, LastProcess },
+  name: "ProcessIndex",
   data() {
-    return {};
+    return {
+      activeName: "resume",
+    };
   },
-  methods: {},
+  methods: {
+    handleClick(tab, event) {
+      // console.log(tab, event);
+      console.log("单击：" + tab.name);
+    },
+  },
   mounted() {},
 };
 </script>
 
 <style scoped>
+
 </style>

@@ -65,6 +65,17 @@
                 </router-link></span
               >
             </el-menu-item>
+            <el-menu-item index="2-2">
+              <i class="el-icon-chat-dot-round"></i>
+              <span slot="title"
+                ><router-link
+                  to="/manage/enterprise/public"
+                  style="text-decoration: none"
+                >
+                  公众号
+                </router-link></span
+              >
+            </el-menu-item>
           </el-menu-item-group>
         </el-submenu>
 

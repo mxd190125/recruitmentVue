@@ -17,6 +17,7 @@ import ManageIndex from '@/views/manage/ManageIndex'
 
 import DynamicIndex from '@/views/manage/enterprise/DynamicIndex'
 import ConductIndex from '@/views/manage/enterprise/ConductIndex'
+import PublicIndex from '@/views/manage/enterprise/PublicIndex'
 
 import ChatIndex from '@/views/manage/message/ChatIndex'
 import ProcessIndex from '@/views/manage/message/ProcessIndex'
@@ -86,6 +87,10 @@ const routes = [
       {
         path: '/manage/enterprise/conduct',
         component: ConductIndex
+      },
+      {
+        path: '/manage/enterprise/public',
+        component: PublicIndex
       },
       {
         path: '/manage/message/process',
