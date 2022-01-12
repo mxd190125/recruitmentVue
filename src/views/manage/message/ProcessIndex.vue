@@ -22,10 +22,10 @@
 </template>
 
 <script>
-import ExamProcess from './exam/ExamProcess.vue';
-import InterviewProcess from './interview/InterviewProcess.vue';
-import ResumeProcess from './resume/ResumeProcess.vue';
-import LastProcess from './last/LastProcess.vue';
+import ExamProcess from './process/exam/ExamProcess.vue';
+import InterviewProcess from './process/interview/InterviewProcess.vue';
+import ResumeProcess from './process/resume/ResumeProcess.vue';
+import LastProcess from './process/last/LastProcess.vue';
 
 export default {
   components: { ResumeProcess, ExamProcess, InterviewProcess, LastProcess },
