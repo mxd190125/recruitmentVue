@@ -13,56 +13,41 @@
             class="atsx-input"
             placeholder="搜索职位"
             type="text"
-            value=""
+            v-model="positionName"
           />
           <span class="atsx-input-suffix">
-            <button type="button" class="atsx-btn">
+            <button type="button" class="atsx-btn" @click="searchPosition()">
               <span>搜索</span>
             </button>
           </span>
         </span>
         <div class="filter">
           <div class="role-filter">
-            <el-checkbox-group v-model="roleCheckList">
-              <el-checkbox label="应届生"></el-checkbox>
-              <el-checkbox label="实习生"></el-checkbox>
+            <el-checkbox-group v-model="checkedRecruitTypes">
+              <el-checkbox :label="1">实习</el-checkbox>
+              <el-checkbox :label="2">校招</el-checkbox>
             </el-checkbox-group>
           </div>
           <div class="city-filter">
             <span class="filter-lable">城市：</span>
-            <el-checkbox
-              :indeterminate="cityIsIndeterminate"
-              v-model="cityCheckAll"
-              @change="handleCheckAllChange"
-              >全选</el-checkbox
-            >
-            <el-checkbox-group
-              v-model="cityCheckedCities"
-              @change="handleCheckedCitiesChange"
-            >
+            <el-checkbox-group v-model="checkedCities">
               <el-checkbox
-                v-for="city in cityCities"
-                :label="city"
-                :key="city"
-                >{{ city }}</el-checkbox
-              >
+                v-for="city in cities"
+                :label="city.id"
+                :key="city.id"
+                >{{ city.cityName }}
+              </el-checkbox>
             </el-checkbox-group>
           </div>
           <div class="position-filter">
             <span class="filter-lable">岗位：</span>
-            <el-checkbox
-              :indeterminate="typeIsIndeterminate"
-              v-model="typeCheckAll"
-              @change="handleCheckAllChange"
-              >全选</el-checkbox
-            >
-            <el-checkbox-group
-              v-model="checkedTypes"
-              @change="handleCheckedCitiesChange"
-            >
-              <el-checkbox v-for="type in types" :label="type" :key="type">{{
-                type
-              }}</el-checkbox>
+            <el-checkbox-group v-model="checkedPositionTypes">
+              <el-checkbox
+                v-for="type in positionTypes"
+                :label="type.id"
+                :key="type.id"
+                >{{ type.typeName }}</el-checkbox
+              >
             </el-checkbox-group>
           </div>
         </div>
@@ -74,133 +59,130 @@
         <position-item
           v-for="position in positions"
           :key="position.id"
-          @click.native="showPositonDetail(position.id)"
+          @click.native="showPositonDetail(position)"
           :id="position.id"
-          :title="position.title"
-          :base="position.base"
-          :recruitmentType="position.recruitmentType"
-          :quantity="position.quantity"
-          :positionType="position.positionType"
+          :positionName="position.positionName"
+          :cityName="position.cityName"
+          :recruitTypeName="position.recruitTypeName"
+          :num="position.num"
+          :positionTypeName="position.positionTypeName"
           :description="position.description"
-          :release="position.release"
+          :createTime="position.createTime"
         >
         </position-item>
+      </div>
+      <!-- 分页 -->
+      <div class="pageBlock">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page.sync="page"
+          :page-size="size"
+          layout="total, prev, pager, next"
+          :total="total"
+        >
+        </el-pagination>
       </div>
     </div>
   </div>
 </template>    
 
 <script>
+import axios from "axios";
+
 import PositionItem from "../../position/PositionItem.vue";
 export default {
   components: { PositionItem },
   name: "Campus",
   data() {
     return {
-      cityCheckAll: false,
-      cityCheckedCities: ["上海", "北京"],
-      cityCities: [],
-      cityIsIndeterminate: true,
+      positions: [],
+      positionName: "",
+      cities: [],
+      checkedCities: [],
+      positionTypes: [],
+      checkedPositionTypes: [],
+      checkedRecruitTypes: [1, 2],
 
-      typeCheckAll: false,
-      checkedTypes: ["后端", "前端"],
-      types: [],
-      typeIsIndeterminate: true,
-
-      roleCheckList: ["应届生", "实习生"],
-
-      positions: [
-        {
-          id: "1",
-          title: "后端研发工程师-钱包支付-抖音/直播",
-          base: "北京",
-          recruitmentType: "校招",
-          quantity: "若干",
-          positionType: "技术",
-          release: "2021年11月9日",
-          description:
-            "1、负责设计和实现大规模、高效、智能的基于 Kubernetes 平台的边缘计算新一代调度体系；\n" +
-            "2、负责平台稳定性、高可用和高性能，提高资源利用效率，降低成本；\n" +
-            "3、负责建设智能调度，结合动态运行数据、深度学习、强化学习等技术打造下一代智能化、可视化调度技术；\n" +
-            "4、支持计算类、大数据类、机器学习等业务的资源调度，设计和研发高并发、低延迟、大规模的调度技术。",
-        },
-        {
-          id: "2",
-          title: "后端研发工程师-钱包支付-抖音/直播",
-          base: "北京",
-          recruitmentType: "校招",
-          quantity: "若干",
-          positionType: "技术",
-          release: "2021年11月9日",
-          description:
-            "1、负责设计和实现大规模、高效、智能的基于 Kubernetes 平台的边缘计算新一代调度体系；\n" +
-            "2、负责平台稳定性、高可用和高性能，提高资源利用效率，降低成本；\n" +
-            "3、负责建设智能调度，结合动态运行数据、深度学习、强化学习等技术打造下一代智能化、可视化调度技术；\n" +
-            "4、支持计算类、大数据类、机器学习等业务的资源调度，设计和研发高并发、低延迟、大规模的调度技术。",
-        },
-        {
-          id: "3",
-          title: "后端研发工程师-钱包支付-抖音/直播",
-          base: "北京",
-          recruitmentType: "校招",
-          quantity: "若干",
-          positionType: "技术",
-          release: "2021年11月9日",
-          description:
-            "1、负责设计和实现大规模、高效、智能的基于 Kubernetes 平台的边缘计算新一代调度体系；\n" +
-            "2、负责平台稳定性、高可用和高性能，提高资源利用效率，降低成本；\n" +
-            "3、负责建设智能调度，结合动态运行数据、深度学习、强化学习等技术打造下一代智能化、可视化调度技术；\n" +
-            "4、支持计算类、大数据类、机器学习等业务的资源调度，设计和研发高并发、低延迟、大规模的调度技术。",
-        },
-        {
-          id: "4",
-          title: "后端研发工程师-钱包支付-抖音/直播",
-          base: "北京",
-          recruitmentType: "校招",
-          quantity: "若干",
-          positionType: "技术",
-          release: "2021年11月9日",
-          description:
-            "1、负责设计和实现大规模、高效、智能的基于 Kubernetes 平台的边缘计算新一代调度体系；\n" +
-            "2、负责平台稳定性、高可用和高性能，提高资源利用效率，降低成本；\n" +
-            "3、负责建设智能调度，结合动态运行数据、深度学习、强化学习等技术打造下一代智能化、可视化调度技术；\n" +
-            "4、支持计算类、大数据类、机器学习等业务的资源调度，设计和研发高并发、低延迟、大规模的调度技术。",
-        },
-        {
-          id: "5",
-          title: "后端研发工程师-钱包支付-抖音/直播",
-          base: "北京",
-          recruitmentType: "校招",
-          quantity: "若干",
-          positionType: "技术",
-          release: "2021年11月9日",
-          description:
-            "1、负责设计和实现大规模、高效、智能的基于 Kubernetes 平台的边缘计算新一代调度体系；\n" +
-            "2、负责平台稳定性、高可用和高性能，提高资源利用效率，降低成本；\n" +
-            "3、负责建设智能调度，结合动态运行数据、深度学习、强化学习等技术打造下一代智能化、可视化调度技术；\n" +
-            "4、支持计算类、大数据类、机器学习等业务的资源调度，设计和研发高并发、低延迟、大规模的调度技术。",
-        },
-      ],
+      size: 10,
+      page: 1,
+      total: 0,
+      pages: 0,
     };
   },
+  computed: {},
   created() {
-    this.cityCities = ["上海", "北京", "广州", "深圳"];
-    this.types = ["后端", "前端", "算法", "运营"];
+    this.initDatas();
   },
   methods: {
-    handleCheckAllChange(val) {
-      this.cityCheckedCities = val ? cityCities : [];
-      this.cityIsIndeterminate = false;
+    // 初始化数据
+    initDatas() {
+      axios({
+        method: "get",
+        url: "http://localhost:8082/position/getCitiesAndTypes",
+      }).then((res) => {
+        res = res.data;
+        if (res.status == 0) {
+          this.cities = res.data.cities;
+          this.positionTypes = res.data.types;
+          this.checkedCities = this.cities.map((e) => {
+            return e.id;
+          });
+          this.checkedPositionTypes = this.positionTypes.map((e) => {
+            return e.id;
+          });
+          this.getPosiotionList();
+        } else {
+          console.log("加载多选框元素失败");
+        }
+      });
     },
-    handleCheckedCitiesChange(value) {
-      let checkedCount = value.length;
-      this.cityCheckAll = checkedCount === this.cityCities.length;
-      this.cityIsIndeterminate =
-        checkedCount > 0 && checkedCount < this.cityCities.length;
+    // 查询职位列表
+    getPosiotionList() {
+      axios({
+        method: "post",
+        url: "http://localhost:8082/position/getPositionsList",
+        data: {
+          size: this.size,
+          page: this.page,
+          positionName: this.positionName,
+          cityIds: this.checkedCities,
+          positionTypeIds: this.checkedPositionTypes,
+          recruitTypeIds: this.checkedRecruitTypes,
+        },
+      }).then((res) => {
+        res = res.data;
+        if (res.status == 0) {
+          this.positions = res.data.data;
+          this.size = res.data.size;
+          this.page = res.data.page;
+          this.total = res.data.total;
+          this.pages = res.data.pages;
+        }
+      });
     },
-    showPositonDetail(id) {
-      console.log("跳转详细页面...." + "id:" + id);
-      this.$router.push("/position/showPositionDetail");
+    // 条件查询
+    searchPosition() {
+      this.getPosiotionList();
+    },
+    // 跳转到详情页面
+    showPositonDetail(position) {
+      console.log("跳转到职位详情页面...." + "id:" + position.id);
+      this.$router.push({
+        path: "/position/showPositionDetail",
+        query: { position: position },
+      });
+    },
+    // 分页事件
+    // 每页数量变动事件
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    // 当前页变动事件
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.page = val;
+      this.getPosiotionList();
     },
   },
 };
@@ -244,6 +226,7 @@ export default {
 
 /* 搜索按钮 */
 .atsx-btn {
+  cursor: pointer;
   width: 100px;
   border: 0px;
   height: 48px;
@@ -273,6 +256,9 @@ export default {
 
 .rightBlock {
   width: 712px;
+  padding-left: 451px;
+}
+.pageBlock {
   padding-left: 451px;
 }
 </style>

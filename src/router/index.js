@@ -1,8 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+
+import AuthPage from '@/views/auth/AuthPage'
+import Register from '@/views/auth/register/Register'
+import Forget from '@/views/auth/forget/Forget'
+
 import Index from '@/views/index/Index'
 import Home from '@/views/index/home/Home'
 import Dynamic from '@/views/index/dynamic/Dynamic'
+import DynamicDetail from '@/views/index/dynamic/DynamicDetail'
 import Internship from '@/views/index/internship/Internship'
 import Campus from '@/views/index/campus/Campus'
 import Social from '@/views/index/social/Social'
@@ -20,6 +26,7 @@ import ConductIndex from '@/views/manage/enterprise/ConductIndex'
 import PublicIndex from '@/views/manage/enterprise/PublicIndex'
 
 import ChatIndex from '@/views/manage/message/ChatIndex'
+import ChatApp from '@/views/manage/message/ChatApp'
 import ProcessIndex from '@/views/manage/message/ProcessIndex'
 
 import PersonalIndex from '@/views/manage/personal/PersonalIndex'
@@ -31,9 +38,25 @@ Vue.use(VueRouter)
 
 const routes = [
   {
+    path: '/dynamic/detail',
+    component: DynamicDetail
+  },
+  {
     path: '',
     component: Index,
     children: [
+      {
+        path: '/auth/login',
+        component: AuthPage
+      },
+      {
+        path: '/auth/register',
+        component: Register
+      },
+      {
+        path: '/auth/forget',
+        component: Forget
+      },
       {
         path: '/index/home',
         component: Home
@@ -98,7 +121,7 @@ const routes = [
       },
       {
         path: '/manage/message/chat',
-        component: ChatIndex
+        component: ChatApp
       },
       {
         path: '/manage/personal',

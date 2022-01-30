@@ -2,23 +2,23 @@
   <div id="positionDetail">
     <div class="job-detail">
       <div class="job-header">
-        <span class="jobTitle">{{ title }}</span>
+        <span class="jobTitle">{{ position.positionName }}</span>
       </div>
       <div class="job-info">
-        <span>{{ base }}</span>
+        <span>{{ position.cityName }}</span>
         <div class="lineDevider"></div>
-        <span>{{ positionType }}</span>
+        <span>{{ position.positionTypeName }}</span>
         <div class="lineDevider"></div>
-        <span>{{ recruitmentType }}</span>
+        <span>{{ position.recruitTypeName }}</span>
         <div class="lineDevider"></div>
-        <span>{{ quantity }}</span>
+        <span>{{ position.num }}</span>
         <div class="lineDevider"></div>
-        <span>{{ release }}</span>
+        <span>{{ position.createTime }}</span>
       </div>
       <div class="block-title">职位描述</div>
-      <div class="block-content">{{ description }}</div>
+      <div class="block-content">{{ position.description }}</div>
       <div class="block-title">职位要求</div>
-      <div class="block-content">{{ requirement }}</div>
+      <div class="block-content">{{ position.requirement }}</div>
       <div class="aply-block">
         <el-button type="primary" class="aply-btn">投递</el-button>
       </div>
@@ -32,12 +32,14 @@ export default {
   name: "PositionDetail",
   data() {
     return {
-      title: "后端实习生-架构",
-      base: "杭州",
-      positionType: "后端",
-      recruitmentType: "校招",
-      quantity: "200",
-      release: "2021年11月9日",
+      position: {},
+      id: 3,
+      positionName: "后端实习生-架构",
+      cityName: "杭州",
+      positionTypeName: "后端",
+      recruitTypeName: "校招",
+      num: "200",
+      createTime: "2021年11月9日",
       description:
         "负责推荐系统架构的设计和开发，保障系统稳定和高可用；负责在线服务、离线数据流性能优化，解决系统瓶颈，降低成本\n开销；抽象系统通用组件和服务，建设推荐中台、数据中台，支撑新产品快速孵化以及为 toB 赋能。\n\n1、负责智能推荐、智能内容等产品的推荐架构工作，解决推荐核心系统的架构优化问题；\n" +
         "2、支持 SaaS 推荐系统的设计和开发工作，将字节核心推荐能力、优质内容输出给合作方；\n" +
@@ -48,6 +50,13 @@ export default {
         "1、扎实的编程能力，有优秀的设计和代码品位，对解决具有挑战性问题充满激情;\n2、对在线架构有丰富的经验和广阔的视野；\n3、开发语言C++/Python；\n4、有以下经验者优先：推荐或搜索相关的开发工作；高并发高吞吐的系统经验。",
     };
   },
+  created() {
+    this.position =  this.$route.query.position
+    console.log(this.position);
+  },
+  methods: {
+
+  }
 };
 </script>
                

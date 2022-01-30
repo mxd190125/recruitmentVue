@@ -1,18 +1,18 @@
 <template>
   <div class="position-item">
     <div class="position-item-title">
-      <span class="position-item-title-text">{{ title }}</span>
+      <span class="position-item-title-text">{{ positionName }}</span>
     </div>
     <div class="position-item-sub-title">
-      {{ base }}
+      {{ cityName }}
       <div class="lineDevider"></div>
-      {{ positionType }}
+      {{ positionTypeName }}
       <div class="lineDevider"></div>
-      {{ recruitmentType }}
+      {{ recruitTypeName }}
       <div class="lineDevider"></div>
-      {{ quantity }}
+      {{ num }}
       <div class="lineDevider"></div>
-      {{ release }}
+      {{ createTime }}
     </div>
     <div class="position-item-description">{{ description }}</div>
   </div>
@@ -23,13 +23,13 @@ export default {
   name: "PositionItem",
   props: [
     "id",
-    "title",
-    "base",
-    "recruitmentType",
-    "quantity",
-    "positionType",
+    "positionName",
+    "cityName",
+    "recruitTypeName",
+    "num",
+    "positionTypeName",
     "description",
-    "release",
+    "createTime",
   ],
   data() {
     return {};
@@ -52,9 +52,10 @@ a {
   cursor: pointer;
 }
 .position-item-title {
-  font-size: 18px;
+  font-size: 25px;
   font-weight: 800;
   color: #1f2329;
+  margin: 4px 0 15px;
 }
 .position-item-sub-title {
   color: #646a73;

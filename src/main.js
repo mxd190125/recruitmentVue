@@ -11,7 +11,7 @@ Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.prototype.$messgae=Message
 
-axios.defaults.baseURL='http://localhost:8080'
+// axios.defaults.baseURL='http://localhost:8081'
 new Vue({
   router,
   store,

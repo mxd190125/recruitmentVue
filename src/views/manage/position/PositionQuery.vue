@@ -6,12 +6,17 @@
         <el-form :inline="true" :model="formInline" class="demo-form-inline">
           <el-form-item label="职位名称">
             <el-input
+              size="small"
               v-model="formInline.positionName"
               placeholder="职位名称"
             ></el-input>
           </el-form-item>
           <el-form-item label="招聘类型">
-            <el-select v-model="formInline.recruitType" placeholder="招聘类型">
+            <el-select
+              size="small"
+              v-model="formInline.recruitType"
+              placeholder="招聘类型"
+            >
               <el-option
                 v-for="item in recruitTypes"
                 :key="item.value"
@@ -22,7 +27,11 @@
             </el-select>
           </el-form-item>
           <el-form-item label="城市">
-            <el-select v-model="formInline.city" placeholder="城市">
+            <el-select
+              size="small"
+              v-model="formInline.city"
+              placeholder="城市"
+            >
               <el-option
                 v-for="item in cities"
                 :key="item.value"
@@ -32,11 +41,12 @@
               </el-option>
             </el-select>
           </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
-          </el-form-item>
           <el-form-item label="职位类型">
-            <el-select v-model="formInline.positionType" placeholder="职位类型">
+            <el-select
+              size="small"
+              v-model="formInline.positionType"
+              placeholder="职位类型"
+            >
               <el-option
                 v-for="item in positionTypes"
                 :key="item.value"
@@ -46,11 +56,16 @@
               </el-option>
             </el-select>
           </el-form-item>
+          <el-form-item>
+            <el-button size="small" type="primary" @click="onSubmit"
+              >查询</el-button
+            >
+          </el-form-item>
         </el-form>
       </div>
       <!-- 表格主体 -->
       <div>
-        <el-table :data="tableData" style="width: 100%">
+        <el-table border max-height="500px" :data="tableData" style="width: 100%">
           <el-table-column type="expand">
             <template slot-scope="props">
               <!-- 职位详情 -->
@@ -295,7 +310,7 @@ export default {
     },
     handleCheckClick(position) {
       this.table = true;
-      this.deliveryTile = '「' + position.positionName + '」' + '投递列表';
+      this.deliveryTile = "「" + position.positionName + "」" + "投递列表";
       console.log("查看了职位ID：" + position.id);
     },
     handleRevokeClick(position) {
@@ -321,7 +336,7 @@ export default {
 }
 
 .table-class {
-  width: 1000px;
+  /* width: 1000px; */
   margin: 20px auto;
 }
 .table-page-class {

@@ -12,7 +12,7 @@
       >
         <div id="logo-img">
           <img
-            src="~@/assets/img/index/baidu-logo4.png"
+            src="~@/assets/img/index/logo-blue.png"
             style="height: 40px; margin-top: 8px; margin-bottom: 5px"
             alt=""
           />
@@ -53,25 +53,31 @@
               >了解百度</router-link
             >
           </el-menu-item>
-          <el-submenu index="7">
-            <template v-if="isOnline" slot="title">冬雪是你</template>
-            <template v-else slot="title">登录</template>
+          <!-- 登录成功 -->
+          <el-submenu index="7" v-if="isOnline">
+            <template slot="title">{{username}}</template>
             <router-link
               to="/index/personal/resume/view"
               style="text-decoration: none"
             >
-              <el-menu-item index="5-1">我的简历</el-menu-item>
+              <el-menu-item index="7-1">我的简历</el-menu-item>
             </router-link>
-            <el-menu-item index="5-2">我的账号</el-menu-item>
+            <el-menu-item index="7-2">我的账号</el-menu-item>
             <router-link
               to="/index/personal/application/view"
               style="text-decoration: none"
             >
-              <el-menu-item index="5-3">我的应聘</el-menu-item>
+              <el-menu-item index="7-3">我的应聘</el-menu-item>
             </router-link>
-            <el-menu-item index="5-4">职位收藏</el-menu-item>
-            <el-menu-item index="5-5">退出</el-menu-item>
+            <el-menu-item index="7-4">职位收藏</el-menu-item>
+            <el-menu-item index="7-5">退出</el-menu-item>
           </el-submenu>
+          <!-- 登录 -->
+          <el-menu-item v-else index="8">
+            <router-link to="/auth/login" style="text-decoration: none"
+              >登录</router-link
+            >
+          </el-menu-item>
         </el-menu>
       </el-header>
       <el-main
@@ -132,7 +138,7 @@ export default {
   name: "Index",
   data() {
     return {
-      username: "冬雪是你",
+      username: "",
       activeIndex: "1",
     };
   },
