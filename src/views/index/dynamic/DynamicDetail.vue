@@ -4,7 +4,7 @@
       <div class="content-wrap">
         <!-- 内容区 -->
         <div class="content">
-          <h1 class="article-title">虎虎生威</h1>
+          <h1 class="article-title">虎虎生威{{id}}</h1>
           <div class="article-info-wrap">
             <div class="article-info">
               <!-- 时间 -->
@@ -15,7 +15,7 @@
               <span>阅读 13,244</span>
             </div>
           </div>
-          <article class="article-text">{{ articleText }}</article>
+          <article class="article-text">{{articleText}}</article>
           <div class="nav-other-article">
             <div class="nav-opt"><span>上一篇</span></div>
             <div class="nav-list nav-opt">查看连载目录</div>
@@ -64,10 +64,12 @@ export default {
         "不动的话，也不敢赌这个风险，毕竟不是什么好东西。\n" +
         "有时想，疾病真的是自己造的孽，没好好对待自己的身体，没好好稳定自己的情绪，受外界影响太大了。\n" +
         "以后得改",
+      id: ''
     };
   },
   created() {
-    let dynamicId = this.$route.params.dynamicId;
+    let dynamicId = this.$route.query.id;
+    this.id = dynamicId
     console.log(dynamicId);
   },
   methods: {},

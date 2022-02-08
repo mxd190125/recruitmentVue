@@ -34,7 +34,7 @@ export default {
   padding: 15px 2px 20px 0;
   border-bottom: 1px solid #f0f0f0;
   word-wrap: break-word;
-  box-shadow: ;
+  /* box-shadow: ; */
 }
 .title {
   cursor: pointer;

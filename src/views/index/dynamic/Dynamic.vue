@@ -39,6 +39,9 @@ export default {
       let dynamicId = 123456;
       let { href } = this.$router.resolve({
         path: `/dynamic/detail`,
+        query: {
+          id: dynamicId
+        }
       });
       window.open(href, "_blank");
     },
