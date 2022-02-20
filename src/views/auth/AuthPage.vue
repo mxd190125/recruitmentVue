@@ -16,18 +16,21 @@
       <div class="other-login-container">
         <p class="other-title">第三方快速登录</p>
         <div class="other-icons">
+          <!-- 百度 -->
           <span class="other-icons-item"
             ><img
-              src="~@/assets/img/auth/weixin.png"
+              src="~@/assets/img/auth/baidu.png"
               alt=""
               class="other-icons-img"
+              @click="baiduLogin"
           /></span>
-          <span class="other-icons-item"
+          <!-- QQ -->
+          <!-- <span class="other-icons-item"
             ><img
               src="~@/assets/img/auth/qq3.png"
               alt=""
               class="other-icons-img"
-          /></span>
+          /></span> -->
         </div>
       </div>
       <!-- 用户协议 -->
@@ -39,6 +42,7 @@
 <script>
 import PwdLogin from "./login/PwdLogin.vue";
 import CodeLogin from "./login/CodeLogin.vue";
+import axios from 'axios';
 
 export default {
   components: { PwdLogin, CodeLogin },
@@ -52,6 +56,21 @@ export default {
     handleClick(tab, event) {
       console.log(tab, event);
     },
+    // 第三方登录-百度
+    baiduLogin() {
+      axios({
+        method: "get",
+        url: 'http://localhost:8081/auth/baidu/login'
+      }).then((res)=>{
+        res = res.data;
+        if (res.status == 0) {
+          console.log("url=>" + res.msg);
+          // 跳转至百度授权页面
+          window.location.href = res.msg;
+        }
+      });
+      // window.location.href = 'http://openapi.baidu.com/oauth/2.0/authorize?client_id=6PymiRqvIcnNpqGGajlm7nn1&response_type=code&redirect_uri=http://04528914x8.picp.vip/index&display=dialog&confirm_login=1'
+    }
   },
   mounted() {},
 };

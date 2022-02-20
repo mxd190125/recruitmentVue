@@ -7,7 +7,7 @@
           <div>
             <el-input
               placeholder="请输入内容"
-              v-model="input1"
+              v-model="positionName"
               class="input-common-class"
               clearable
               prefix-icon="el-icon-edit"
@@ -22,7 +22,7 @@
               type="textarea"
               :autosize="{ minRows: 2, maxRows: 10 }"
               placeholder="请输入内容"
-              v-model="textarea1"
+              v-model="description"
               prefix-icon="el-icon-edit"
               clearable
               class="textarea-common-class"
@@ -37,7 +37,7 @@
               type="textarea"
               :autosize="{ minRows: 2, maxRows: 10 }"
               placeholder="请输入内容"
-              v-model="textarea2"
+              v-model="requirement"
               prefix-icon="el-icon-edit"
               clearable
               class="textarea-common-class"
@@ -48,43 +48,40 @@
         <div class="edit-div-class">
           <el-select
             v-model="city"
-            multiple
             placeholder="请选择城市"
             class="select-class"
           >
             <el-option
-              v-for="item in citcities"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              v-for="e in cities"
+              :key="e.id"
+              :label="e.cityName"
+              :value="e.id"
             >
             </el-option>
           </el-select>
           <el-select
             v-model="positionType"
-            multiple
             placeholder="请选择职位类型"
             class="select-class"
           >
             <el-option
-              v-for="item in positionTypes"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              v-for="e in positionTypes"
+              :key="e.id"
+              :label="e.typeName"
+              :value="e.id"
             >
             </el-option>
           </el-select>
           <el-select
             v-model="recruitType"
-            multiple
             placeholder="请选择招聘类型"
             class="select-class"
           >
             <el-option
-              v-for="item in recruitTypes"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
+              v-for="e in recruitTypes"
+              :key="e.id"
+              :label="e.typeName"
+              :value="e.id"
             >
             </el-option>
           </el-select>
@@ -104,7 +101,7 @@
           </el-select>
         </div>
         <div class="edit-div-class">
-          <el-button type="primary" plain>发布职位</el-button>
+          <el-button type="primary" plain @click="createPosition">发布职位</el-button>
         </div>
       </el-card>
     </div>
@@ -112,13 +109,14 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "PositionRelease",
   data() {
     return {
-      input1: "",
-      textarea1: "",
-      textarea2: "",
+      positionName: "",
+      description: "",
+      requirement: "",
       nums: [
         {
           value: "100",
@@ -146,86 +144,124 @@ export default {
         },
       ],
       num: "",
-      citcities: [
-        {
-          value: "Beijing",
-          label: "北京",
-        },
-        {
-          value: "Shanghai",
-          label: "上海",
-        },
-        {
-          value: "Nanjing",
-          label: "南京",
-        },
-        {
-          value: "Chengdu",
-          label: "成都",
-        },
-        {
-          value: "Shenzhen",
-          label: "深圳",
-        },
-        {
-          value: "Guangzhou",
-          label: "广州",
-        },
-      ],
-      city: [],
-      recruitTypes: [
-        {
-          value: "sx",
-          label: "实习",
-        },
-        {
-          value: "xz",
-          label: "校招",
-        },
-        {
-          value: "sz",
-          label: "社招",
-        },
-      ],
-      recruitType: [],
-      positionTypes: [
-        {
-          value: "sf",
-          label: "算法",
-        },
-        {
-          value: "hd",
-          label: "后端",
-        },
-        {
-          value: "qd",
-          label: "前端",
-        },
-        {
-          value: "ui",
-          label: "UI",
-        },
-        {
-          value: "cp",
-          label: "产品",
-        },
-        {
-          value: "sj",
-          label: "设计",
-        },
-        {
-          value: "yy",
-          label: "运营",
-        },
-        {
-          value: "xz",
-          label: "行政",
-        },
-      ],
-      positionType: [],
+      cities: [],
+      city: "",
+      recruitTypes: [],
+      recruitType: "",
+      positionTypes: [],
+      positionType: "",
     };
   },
+  created() {
+    this.initDatas();
+  },
   methods: {
+    // 初始化数据
+    initDatas() {
+      // 加载下拉框数据
+      axios({
+        method: "get",
+        url: "http://localhost:8082/position/getCitiesAndTypes",
+      }).then((res) => {
+        res = res.data;
+        if (res.status == 0) {
+          this.cities = res.data.cities;
+          this.positionTypes = res.data.types;
+          this.recruitTypes = res.data.recruitTypes;
+        } else {
+          console.log("加载多选框元素失败");
+        }
+      });
+    },
+    // 创建职位
+    createPosition() {
+      // 校验
+      console.log('创建职位....')
+      if (this.positionName.trim() == "") {
+        this.$message({
+          message: "职位名称不能为空！",
+          type: "warning",
+        });
+        return
+      }
+      if (this.description.trim() == "") {
+        this.$message({
+          message: "职位描述不能为空！",
+          type: "warning",
+        });
+        return
+      }
+      if (this.requirement.trim() == "") {
+        this.$message({
+          message: "职位要求不能为空！",
+          type: "warning",
+        });
+        return
+      }
+      if (this.city == "") {
+        this.$message({
+          message: "城市不能为空！",
+          type: "warning",
+        });
+        return
+      }
+      if (this.positionType == "") {
+        this.$message({
+          message: "职位类型不能为空！",
+          type: "warning",
+        });
+        return
+      }
+      if (this.recruitType == "") {
+        this.$message({
+          message: "招聘类型不能为空！",
+          type: "warning",
+        });
+        return
+      }
+      if (this.num == "") {
+        this.$message({
+          message: "招聘人数不能为空！",
+          type: "warning",
+        });
+        return
+      }
+      // 请求接口
+      axios({
+        method: "post",
+        url: "http://localhost:8082/position/createPosition",
+        data: {
+          positionName: this.positionName,
+          description: this.description,
+          requirement: this.requirement,
+          city: this.city,
+          recruitType: this.recruitType,
+          positionType: this.positionType,
+          num: this.num,
+        },
+      }).then((res) => {
+        res = res.data;
+        console.log(res)
+        if (res.status == 0) {
+          this.positionName = "";
+          this.description = "";
+          this.requirement = "";
+          this.city = "";
+          this.recruitType = "";
+          this.positionType = "";
+          this.num = "";
+          this.$message({
+            message: "职位创建成功！",
+            type: "success",
+          });
+        } else {
+          this.$message({
+            message: res.msg,
+            type: "error",
+          });
+        }
+      });
+    },
     handleChange(value) {
       console.log(value);
     },

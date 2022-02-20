@@ -2,14 +2,14 @@
   <div class="code-login">
     <div class="code-container">
       <el-input
-        placeholder="请输入手机号"
+        placeholder="请输入手机号/邮箱"
         clearable
         v-model="phone"
         class="login-input"
       />
       <div>
         <el-input
-          placeholder="请输入短信验证码"
+          placeholder="请输入验证码"
           clearable
           v-model="code"
           class="login-code-input"

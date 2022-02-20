@@ -150,7 +150,7 @@ export default {
       resumeList: [
         {
           id: 1,
-          name: "马雪冬",
+          n: "马雪冬",
           phone: "19981451191",
           email: "test@test.com",
           deliveryPost: "Java后端-国际化电商",

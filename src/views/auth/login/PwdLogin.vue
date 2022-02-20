@@ -53,6 +53,7 @@ export default {
     openFail(str) {
       this.$message.error(str);
     },
+    // 账号密码登录
     doLogin() {
       this.msg = "";
       if (this.username.trim() == "") {
@@ -75,10 +76,17 @@ export default {
         res = res.data;
         if (res.status == 1000) {
           this.openSucess(res.msg);
-          this.$store.commit("setToken", res.data.token);
-          let token = this.$store.getters.getToken;
-          console.log(token);
-          return;
+          let user = {
+            username: res.data.info.username,
+            avatarUrl: res.data.info.avatarUrl,
+            token: res.data.token,
+          }
+          this.$store.commit("setUser", user);
+          // this.$store.commit("setToken", res.data.token);
+          // let token = this.$store.getters.getToken;
+          // console.log("token=>" + token);
+          // this.$router.push('/index/home');
+          window.location.href='http://localhost:8080/index/home';
         }
         if (res.status == 1004 || res.status == 1003 || res.status == 1001) {
           this.msg = res.msg;

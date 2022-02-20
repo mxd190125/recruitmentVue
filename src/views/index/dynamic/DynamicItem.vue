@@ -2,10 +2,10 @@
   <div class="dynamic-item">
     <div class="item-content">
       <p class="title">{{ title }}</p>
-      <p class="abstract">{{ abstract }}</p>
+      <p class="abstract">{{ textAbstract }}</p>
       <div class="meta">
-        <span><i class="el-icon-chat-square">675</i></span>
-        <span><i class="el-icon-thumb">66</i></span>
+        <span><i class="el-icon-chat-square">{{ discussNum }}</i></span>
+        <span><i class="el-icon-thumb">{{ goodNum }}</i></span>
       </div>
     </div>
   </div>
@@ -14,11 +14,14 @@
 <script>
 export default {
   name: "DynamicItem",
+  props: [
+    "id", "title", "textAbstract", "discussNum", "goodNum"
+  ],
   data() {
     return {
-      title: "虎虎生威，虎年大吉",
-      abstract:
-        "岁月中，谁都渴望万事顺遂，然而，谁都不可能真的那么顺利。 可能说，有的人即使并不是那么顺利，也不过只会遇见一些小波折，却也有人，在人生的某一个路...",
+      // title: "虎虎生威，虎年大吉",
+      // abstract:
+      //   "岁月中，谁都渴望万事顺遂，然而，谁都不可能真的那么顺利。 可能说，有的人即使并不是那么顺利，也不过只会遇见一些小波折，却也有人，在人生的某一个路...",
     };
   },
   methods: {},

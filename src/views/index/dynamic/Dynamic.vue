@@ -8,20 +8,26 @@
       </div>
       <div class="dynamic-container-list">
         <!-- 动态文章列表 -->
-        <dynamic-item @click.native="showDynamicDetail()" />
-        <dynamic-item @click.native="showDynamicDetail()" />
-        <dynamic-item @click.native="showDynamicDetail()" />
-        <dynamic-item @click.native="showDynamicDetail()" />
-        <dynamic-item @click.native="showDynamicDetail()" />
+        <dynamic-item
+          v-for="item in articleList"
+          :key="item.id"
+          :id="item.id"
+          :title="item.title"
+          :textAbstract="item.textAbstract"
+          :goodNum="item.goodNum"
+          :discussNum="item.discussNum"
+          @click.native="showDynamicDetail(item)"
+        />
       </div>
       <div class="load-more">
-        <div>阅读更多</div>
+        <div @click="loadMore">阅读更多</div>
       </div>
     </div>
   </div>
 </template>    
 
 <script>
+import axios from "axios";
 import DynamicItem from "./DynamicItem.vue";
 
 export default {
@@ -31,19 +37,58 @@ export default {
     return {
       dynamicSlideaImgSrc:
         "https://upload.jianshu.io/admin_banners/web_images/5054/c9aadf71d6c4429a3960f4da0a421171805d16fc.png?imageMogr2/auto-orient/strip|imageView2/1/w/1250/h/540",
+      articleList: [],
+
+      size: 10,
+      page: 1,
+      total: 0,
+      pages: -1,
     };
   },
+  created() {
+    this.getArticleList();
+  },
   methods: {
-    // 点击文章详情事件
-    showDynamicDetail() {
-      let dynamicId = 123456;
+    // 获取文章列表
+    getArticleList() {
+      if (this.page > this.pages && this.pages != -1) {
+        return;
+      }
+      console.log('page===> '+this.page)
+      axios({
+        method: "post",
+        url: "http://localhost:8082/article/getArticleList",
+        data: {
+          size: this.size,
+          page: this.page
+        },
+      }).then((res) => {
+        res = res.data;
+        if (res.status == 0) {
+          // 追加
+          this.articleList = this.articleList.concat(res.data.data);
+          this.size = res.data.size;
+          this.page = res.data.page;
+          this.total = res.data.total;
+          this.pages = res.data.pages;
+        }
+      });
+    },
+    // 跳转到文章详情
+    showDynamicDetail(item) {
+      let id = item.id;
       let { href } = this.$router.resolve({
         path: `/dynamic/detail`,
         query: {
-          id: dynamicId
-        }
+          articleId: id,
+        },
       });
       window.open(href, "_blank");
+    },
+    // 加载更多
+    loadMore() {
+      this.page = this.page + 1;
+      this.getArticleList();
     },
   },
 };

@@ -10,7 +10,7 @@ export default new Vuex.Store({
   state: {
     user: {
       username: '',
-      userId: '',
+      avatarUrl: '',
       token: '',
       // photoUrl: ''
   }

@@ -42,7 +42,7 @@ const routes = [
     component: DynamicDetail
   },
   {
-    path: '',
+    path: '/index',
     component: Index,
     children: [
       {

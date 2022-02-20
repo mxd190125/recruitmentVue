@@ -4,22 +4,40 @@
       <div class="content-wrap">
         <!-- 内容区 -->
         <div class="content">
-          <h1 class="article-title">虎虎生威{{id}}</h1>
+          <h1 class="article-title">{{ article.title }}</h1>
           <div class="article-info-wrap">
             <div class="article-info">
               <!-- 时间 -->
-              <span>2021.12.23 16:55:02</span>
+              <span>{{ article.createTime }}</span>
               <!-- 字数 -->
-              <span>字数 192</span>
+              <span>字数 {{ article.wordNum }}</span>
               <!-- 阅读量 -->
-              <span>阅读 13,244</span>
+              <span>阅读 {{ article.viewNum }}</span>
             </div>
           </div>
-          <article class="article-text">{{articleText}}</article>
+          <article class="article-text">{{ article.text }}</article>
           <div class="nav-other-article">
             <div class="nav-opt"><span>上一篇</span></div>
             <div class="nav-list nav-opt">查看连载目录</div>
             <div class="nav-opt"><span>下一篇</span></div>
+          </div>
+          <div>
+            <div class="good-article">
+              <img
+                v-if="isGoodTheArticle"
+                src="~@/assets/img/article/good_active.png"
+                alt=""
+                class="good-article-img"
+              />
+              <img
+                v-else
+                src="~@/assets/img/article/good.png"
+                alt=""
+                class="good-article-img"
+                @click="doGoodArticle"
+              />
+              <span class="good-num">{{ article.goodNum }}人点赞</span>
+            </div>
           </div>
         </div>
         <!-- 评论区 -->
@@ -51,28 +69,88 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   components: {},
   name: "DynamicDetail",
   data() {
     return {
-      articleText:
-        "得知高中同学年薪200万，我顿觉自己好穷。\n" +
-        "一下午在医院等着看外科医生，预约的34号，这会还没看上，大概率到5:30下班前了。\n" +
-        "有点犹豫要不要动手术了！与它同在行不行？\n" +
-        "往自己胸口上动一刀，还是需要勇气的。虽然说年轻恢复快，可还是要一百天才能复原。\n" +
-        "不动的话，也不敢赌这个风险，毕竟不是什么好东西。\n" +
-        "有时想，疾病真的是自己造的孽，没好好对待自己的身体，没好好稳定自己的情绪，受外界影响太大了。\n" +
-        "以后得改",
-      id: ''
+      isGoodTheArticle: false,
+      article: {},
+      articleId: "",
+      token: ""
     };
   },
   created() {
-    let dynamicId = this.$route.query.id;
-    this.id = dynamicId
-    console.log(dynamicId);
+    this.token = this.$store.getters.getToken;
+    this.articleId = this.$route.query.articleId;
+    console.log(this.articleId);
+    this.isGoodArticle();
+    this.getArticleDetail();
   },
-  methods: {},
+  methods: {
+    // 获取文章详情
+    getArticleDetail() {
+      axios({
+        method: "get",
+        url: "http://localhost:8082/article/getArticleDetail",
+        params: {
+          articleId: this.articleId,
+        },
+      }).then((res) => {
+        res = res.data;
+        if (res.status == 0) {
+          this.article = res.data;
+        }
+      });
+    },
+    // 是否已点赞
+    isGoodArticle() {
+      if (this.token == '') {
+        this.$message.error("未登录，无法点赞");
+        return;
+      }
+      axios({
+        headers: {
+          Authorization: this.token,
+        },
+        method: "get",
+        url: "http://localhost:8082/article/isGoodArticle",
+        params: {
+          articleId: this.articleId,
+        },
+      }).then((res) => {
+        res = res.data;
+        if (res.status == 0) {
+          this.isGoodTheArticle = res.data;
+        }
+      });
+    },
+    // 点赞操作
+    doGoodArticle() {
+      // let token = this.$store.getters.getToken;
+      axios({
+        headers: {
+          Authorization: this.token,
+        },
+        method: "get",
+        url: "http://localhost:8082/article/doArticleGood",
+        params: {
+          articleId: this.articleId,
+        },
+      }).then((res) => {
+        res = res.data;
+        if (res.status == 0) {
+          this.isGoodTheArticle = true;
+          // 点赞成功，更新文章
+          this.getArticleDetail();
+        } else {
+          this.$message.error("点赞失败！");
+        }
+      });
+    },
+  },
   mounted() {},
 };
 </script>
@@ -175,6 +253,24 @@ export default {
   border-left: 1px solid #eee;
   border-right: 1px solid #eee;
   cursor: pointer;
+}
+
+/* 点赞 */
+.good-article {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  font-size: 14px;
+  color: #969696;
+}
+.good-article-img {
+  width: 37px;
+  height: 37px;
+  cursor: pointer;
+}
+.good-num {
+  margin-left: 8px;
 }
 
 /* 文章下面评论 */

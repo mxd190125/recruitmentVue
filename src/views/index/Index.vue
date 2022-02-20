@@ -12,7 +12,7 @@
       >
         <div id="logo-img">
           <img
-            src="~@/assets/img/index/logo-blue.png"
+            src="~@/assets/img/index/baidu-logo4.png"
             style="height: 40px; margin-top: 8px; margin-bottom: 5px"
             alt=""
           />
@@ -50,12 +50,15 @@
           </el-menu-item>
           <el-menu-item index="6">
             <router-link to="/index/introduce" style="text-decoration: none"
-              >了解百度</router-link
+              >了解我们</router-link
             >
           </el-menu-item>
           <!-- 登录成功 -->
           <el-submenu index="7" v-if="isOnline">
-            <template slot="title">{{username}}</template>
+            <template slot="title">
+              <img :src="avatarUrl" class="avatar" alt="">
+              {{username}}
+            </template>
             <router-link
               to="/index/personal/resume/view"
               style="text-decoration: none"
@@ -70,7 +73,7 @@
               <el-menu-item index="7-3">我的应聘</el-menu-item>
             </router-link>
             <el-menu-item index="7-4">职位收藏</el-menu-item>
-            <el-menu-item index="7-5">退出</el-menu-item>
+            <el-menu-item index="7-5" @click="logOut">退出</el-menu-item>
           </el-submenu>
           <!-- 登录 -->
           <el-menu-item v-else index="8">
@@ -134,11 +137,13 @@
 </template>    
 
 <script>
+import axios from 'axios';
 export default {
   name: "Index",
   data() {
     return {
       username: "",
+      avatarUrl: '',
       activeIndex: "1",
     };
   },
@@ -147,11 +152,71 @@ export default {
       return this.username != "" ? true : false;
     },
   },
+  created() {
+    let code = this.$route.query.code;
+    if (code != null && code != "") {
+      this.handleBaiduLogin(code);
+    }
+    let user = this.$store.getters.getUser;
+    if (user != null) {
+      this.username = user.username;
+      this.avatarUrl = user.avatarUrl;
+      console.log("this.username:", this.username)
+      console.log("this.avatarUrl:", this.avatarUrl)
+      console.log("token=>" + user.token);
+    }
+  },
   methods: {
+     openSucess(str) {
+      this.$message({
+        message: str,
+        type: "success",
+      });
+    },
+    openFail(str) {
+      this.$message.error(str);
+    },
+    // 处理百度授权完成后的登录
+    handleBaiduLogin(code) {
+      console.log("code:" + code);
+      axios({
+        method: "get",
+        url: 'http://localhost:8081/auth/baidu/callback?code='+code 
+      }).then((res)=>{
+        res = res.data;
+        if (res.status == 1000) {
+          // 登录成功
+          this.openSucess(res.msg);
+          let user = {
+            username: res.data.info.username,
+            avatarUrl: res.data.info.avatarUrl,
+            token: res.data.token,
+          }
+          this.$store.commit("setUser", user);
+          // this.$store.commit("setToken", res.data.token);
+          let token = this.$store.getters.getToken;
+          return;
+        }
+        else if (res.status == 1004 || res.status == 1003 || res.status == 1001) {
+          this.msg = res.msg;
+          return;
+        }
+        else if(res.status == 400) {
+          console.log(res.msg)
+        }
+      });
+    },
     handleSelect(key, keyPath) {
       this.$router;
       console.log(key, keyPath);
     },
+    logOut() {
+      this.$store.commit("setUser", null);
+      this.username = '';
+      this.avatarUrl = '';
+      this.openSucess('成功退出!')
+      window.location.href='http://localhost:8080/auth/login';
+    }
   },
 };
 </script>
@@ -252,5 +317,11 @@ h3 {
 .media-icon img {
   width: 33px;
   height: 32px;
+}
+
+.avatar {
+  height: 40px; 
+  margin-top: 8px; 
+  margin-bottom: 5px
 }
 </style>

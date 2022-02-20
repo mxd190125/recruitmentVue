@@ -14,14 +14,16 @@
           <el-form-item label="招聘类型">
             <el-select
               size="small"
-              v-model="formInline.recruitType"
+              v-model="formInline.recruitTypeIds"
+              multiple
+              clearable
               placeholder="招聘类型"
             >
               <el-option
                 v-for="item in recruitTypes"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :key="item.id"
+                :label="item.typeName"
+                :value="item.id"
               >
               </el-option>
             </el-select>
@@ -29,14 +31,16 @@
           <el-form-item label="城市">
             <el-select
               size="small"
-              v-model="formInline.city"
+              v-model="formInline.cityIds"
+              multiple
+              clearable
               placeholder="城市"
             >
               <el-option
                 v-for="item in cities"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :key="item.id"
+                :label="item.cityName"
+                :value="item.id"
               >
               </el-option>
             </el-select>
@@ -44,14 +48,16 @@
           <el-form-item label="职位类型">
             <el-select
               size="small"
-              v-model="formInline.positionType"
+              v-model="formInline.positionTypeIds"
+              multiple
+              clearable
               placeholder="职位类型"
             >
               <el-option
                 v-for="item in positionTypes"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
+                :key="item.id"
+                :label="item.typeName"
+                :value="item.id"
               >
               </el-option>
             </el-select>
@@ -65,7 +71,12 @@
       </div>
       <!-- 表格主体 -->
       <div>
-        <el-table border max-height="500px" :data="tableData" style="width: 100%">
+        <el-table
+          border
+          max-height="500px"
+          :data="tableData"
+          style="width: 100%"
+        >
           <el-table-column type="expand">
             <template slot-scope="props">
               <!-- 职位详情 -->
@@ -77,13 +88,13 @@
                   props.row.positionName
                 }}</el-descriptions-item>
                 <el-descriptions-item label="城市">{{
-                  props.row.city
+                  props.row.cityName
                 }}</el-descriptions-item>
                 <el-descriptions-item label="招聘类型">
-                  <el-tag size="small">{{ props.row.recruitType }}</el-tag>
+                  <el-tag size="small">{{ props.row.recruitTypeName }}</el-tag>
                 </el-descriptions-item>
                 <el-descriptions-item label="职位类型">
-                  <el-tag size="small">{{ props.row.positionType }}</el-tag>
+                  <el-tag size="small">{{ props.row.positionTypeName }}</el-tag>
                 </el-descriptions-item>
                 <el-descriptions-item label="人数"
                   ><el-tag size="small">{{
@@ -91,13 +102,13 @@
                   }}</el-tag></el-descriptions-item
                 >
                 <el-descriptions-item label="发布时间">{{
-                  props.row.release
+                  props.row.createTime
                 }}</el-descriptions-item>
                 <el-descriptions-item label="职位描述">{{
-                  props.row.positionDesc
+                  props.row.description
                 }}</el-descriptions-item>
                 <el-descriptions-item label="职位要求">{{
-                  props.row.positionReq
+                  props.row.requirement
                 }}</el-descriptions-item>
               </el-descriptions>
 
@@ -136,13 +147,13 @@
           <el-table-column label="职位ID" prop="id" sortable> </el-table-column>
           <el-table-column label="职位名称" prop="positionName" sortable>
           </el-table-column>
-          <el-table-column label="城市" prop="city"> </el-table-column>
-          <el-table-column label="招聘类型" prop="recruitType">
+          <el-table-column label="城市" prop="cityName"> </el-table-column>
+          <el-table-column label="招聘类型" prop="recruitTypeName">
           </el-table-column>
-          <el-table-column label="职位类型" prop="positionType">
+          <el-table-column label="职位类型" prop="positionTypeName">
           </el-table-column>
           <el-table-column label="人数" prop="num"> </el-table-column>
-          <el-table-column label="发布时间" prop="release"> </el-table-column>
+          <el-table-column label="发布时间" prop="createTime"> </el-table-column>
           <el-table-column fixed="right" label="操作" width="180px">
             <template slot-scope="scope">
               <el-button
@@ -190,14 +201,25 @@
       </div>
       <!-- 表格分页 -->
       <div class="table-page-class">
-        <el-pagination background layout="prev, pager, next" :total="1000">
-        </el-pagination>
+        <div class="pageBlock">
+          <el-pagination
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="page"
+            :page-size="size"
+            layout="total, prev, pager, next"
+            :total="total"
+          >
+          </el-pagination>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "PositionQuery",
   data() {
@@ -236,74 +258,82 @@ export default {
           phone: "19981451191",
         },
       ],
-      recruitTypes: [
-        {
-          value: "sx",
-          label: "实习",
-        },
-        {
-          value: "xz",
-          label: "校招",
-        },
-        {
-          value: "sz",
-          label: "社招",
-        },
-      ],
-      positionTypes: [
-        {
-          value: "1",
-          label: "算法",
-        },
-        {
-          value: "2",
-          label: "后端",
-        },
-        {
-          value: "3",
-          label: "前端",
-        },
-      ],
-      cities: [
-        {
-          value: "1",
-          label: "成都",
-        },
-        {
-          value: "2",
-          label: "北京",
-        },
-        {
-          value: "3",
-          label: "上海",
-        },
-      ],
+      recruitTypes: [],
+      positionTypes: [],
+      cities: [],
       formInline: {
         positionName: "",
-        recruitType: "",
-        positionType: "",
-        city: "",
+        recruitTypeIds: "",
+        positionTypeIds: "",
+        cityIds: "",
       },
-      tableData: [
-        {
-          id: "12987122",
-          positionName: "后端实习生-架构",
-          city: "成都、北京、上海",
-          recruitType: "校招",
-          positionType: "后端",
-          release: "2021-11-9",
-          num: "200",
-          positionDesc:
-            "负责推荐系统架构的设计和开发，保障系统稳定和高可用；负责在线服务、离线数据流性能优化，解决系统瓶颈，降低成本开销；抽象系统通用组件和服务，建设推荐中台、数据中台，支撑新产品快速孵化以及为 toB 赋能。\n1、负责智能推荐、智能内容等产品的推荐架构工作，解决推荐核心系统的架构优化问题；2、支持 SaaS 推荐系统的设计和开发工作，将字节核心推荐能力、优质内容输出给合作方；3、针对推荐场景的架构抽象和流程优化，支持大规模的机器学习的优化，支持推荐平台的研发；4、针对高并发高吞吐的大规模系统，提升系统的稳定性、性能、可扩展性；5、核心组件的研发和优化、新技术的应用和落地。",
-          positionReq:
-            "1、扎实的编程能力，有优秀的设计和代码品位，对解决具有挑战性问题充满激情;2、对在线架构有丰富的经验和广阔的视野；3、开发语言C++/Python；4、有以下经验者优先：推荐或搜索相关的开发工作；高并发高吞吐的系统经验。",
-        },
-      ],
+      tableData: [],
+
+      size: 10,
+      page: 1,
+      total: 0,
+      pages: 0,
     };
   },
+  created() {
+    this.initData();
+  },
   methods: {
+    // 初始化数据
+    initData() {
+      this.getCitiesAndTypes();
+      this.getPositionsList();
+    },
+    // 加载加载下拉框
+    getCitiesAndTypes() {
+      axios({
+        method: "get",
+        url: "http://localhost:8082/position/getCitiesAndTypes",
+      }).then((res) => {
+        res = res.data;
+        if (res.status == 0) {
+          this.cities = res.data.cities;
+          this.positionTypes = res.data.types;
+          this.recruitTypes = res.data.recruitTypes;
+        } else {
+          console.log("加载多选框元素失败");
+        }
+      });
+    },
+    // 查询职位列表
+    getPositionsList() {
+      axios({
+        method: "post",
+        url: "http://localhost:8082/position/getPositionsList",
+        data: {
+          positionName: this.formInline.positionName,
+          cityIds: this.formInline.cityIds,
+          recruitTypeIds: this.formInline.recruitTypeIds,
+          positionTypeIds: this.formInline.positionTypeIds,
+          size: this.size,
+          page: this.page,
+        },
+      }).then((res) => {
+        res = res.data;
+        console.log(res);
+        if (res.status == 0) {
+          this.tableData = res.data.data;
+          // 更新分页信息
+          this.size = res.data.size;
+          this.page = res.data.page;
+          this.total = res.data.total;
+          this.pages = res.data.pages;
+        } else {
+          this.$message({
+            message: res.msg,
+            type: "error",
+          });
+        }
+      });
+    },
     onSubmit() {
       console.log("提交了查询");
+      this.getPositionsList();
     },
     handleUpdateClick(position) {
       console.log("修改了职位ID：" + position.id);
@@ -315,6 +345,17 @@ export default {
     },
     handleRevokeClick(position) {
       console.log("撤回了职位ID：" + position.id);
+    },
+    // 分页事件
+    // 每页数量变动事件
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+    },
+    // 当前页变动事件
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.page = val;
+      this.getPositionsList();
     },
   },
   mounted() {},
