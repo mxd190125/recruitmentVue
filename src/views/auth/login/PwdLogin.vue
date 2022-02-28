@@ -77,16 +77,19 @@ export default {
         if (res.status == 1000) {
           this.openSucess(res.msg);
           let user = {
+            id: res.data.info.id,
             username: res.data.info.username,
+            authorities: res.data.info.authorities,
             avatarUrl: res.data.info.avatarUrl,
             token: res.data.token,
           }
+          console.log("账号密码登录=>" + JSON.stringify(user))
           this.$store.commit("setUser", user);
           // this.$store.commit("setToken", res.data.token);
           // let token = this.$store.getters.getToken;
           // console.log("token=>" + token);
           // this.$router.push('/index/home');
-          window.location.href='http://localhost:8080/index/home';
+          window.location.href='http://localhost:8080/index';
         }
         if (res.status == 1004 || res.status == 1003 || res.status == 1001) {
           this.msg = res.msg;

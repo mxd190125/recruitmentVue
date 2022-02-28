@@ -9,9 +9,12 @@
 </template>
 
 <script>
+const uuid = require('uuid')
+
 export default {
   name: "MessageSend",
   props: {
+    socket: "",
     user: Object,
     session: {
       type: Object,
@@ -28,15 +31,28 @@ export default {
   },
   methods: {
     inputing(e) {
-      if (e.ctrlKey && e.keyCode === 13 && this.text.length) {
-        this.messages.push({
-          text: this.text,
-          date: new Date(),
-          userId: this.user.id,
-        });
+      if (e.keyCode === 13 && this.text.length) {
+        let msg = {
+          id: uuid.v1(),
+          from: this.user.id,
+          to: this.session.userId,
+          type: "2",
+          msg: this.text,
+          time: "",
+        };
+        let msgJson = JSON.stringify(msg);
+        this.socket.send(msgJson);
+        this.messages.push(msg);
+        console.log("用户ID：" + this.user.id + " 发送了消息:" + msgJson);
+        console.log("消息列表长度[发送后]:" + this.messages.length);
         this.text = "";
-        console.log("用户ID："+this.user.id+" 发送了消息:" + this.text)
       }
+    },
+    time(date) {
+      if (typeof date === "string") {
+        date = new Date(date);
+      }
+      return date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
     },
   },
   mounted() {},

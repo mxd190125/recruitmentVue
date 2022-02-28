@@ -9,12 +9,16 @@
       <div class="avatar-div">
         <el-upload
           class="avatar-uploader"
-          action="https://jsonplaceholder.typicode.com/posts/"
+          :action="resumuAvatarAction"
           :show-file-list="false"
           :on-success="handleAvatarSuccess"
           :before-upload="beforeAvatarUpload"
         >
-          <img v-if="imageUrl" :src="imageUrl" class="avatar" />
+          <img
+            v-if="base.resume_avatar_url"
+            :src="base.resume_avatar_url"
+            class="avatar"
+          />
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
       </div>
@@ -27,7 +31,26 @@
               <div class="createFormSection-text sofiaBold">附件简历</div>
             </div>
           </div>
-          <div class="createFormSection-right"></div>
+          <div class="createFormSection-right">
+            <el-upload
+              class="upload-demo"
+              drag
+              :show-file-list="false"
+              :action="resumuAttachAction"
+              :on-success="handleAttachSuccess"
+            >
+              <i class="el-icon-upload"></i>
+              <div class="el-upload__text">
+                将文件拖到此处，或<em>点击上传</em>
+              </div>
+              <div v-if="base.resume_attach_origin_name" class="el-upload__tip" style="font-size: 22px;" slot="tip">
+                附件:{{base.resume_attach_origin_name}}
+              </div>
+              <div class="el-upload__tip" slot="tip">
+                只能上传doc/pdf文件，且不超过5M
+              </div>
+            </el-upload>
+          </div>
         </div>
 
         <!-- 基础信息 -->
@@ -45,7 +68,10 @@
                   <span>*</span>
                 </div>
                 <div class="record-input">
-                  <el-input v-model="input" placeholder="请输入内容"></el-input>
+                  <el-input
+                    v-model="base.name"
+                    placeholder="请输入内容"
+                  ></el-input>
                 </div>
               </div>
               <div class="record-row">
@@ -54,7 +80,10 @@
                   <span class="record-title-foucs">*</span>
                 </div>
                 <div class="record-input">
-                  <el-input v-model="input" placeholder="请输入内容"></el-input>
+                  <el-input
+                    v-model="base.phone"
+                    placeholder="请输入内容"
+                  ></el-input>
                 </div>
               </div>
               <div class="record-row">
@@ -63,7 +92,10 @@
                   <span>*</span>
                 </div>
                 <div class="record-input">
-                  <el-input v-model="input" placeholder="请输入内容"></el-input>
+                  <el-input
+                    v-model="base.email"
+                    placeholder="请输入内容"
+                  ></el-input>
                 </div>
               </div>
               <div class="record-row">
@@ -72,7 +104,10 @@
                   <span>*</span>
                 </div>
                 <div class="record-input">
-                  <el-input v-model="input" placeholder="请输入内容"></el-input>
+                  <el-input
+                    v-model="base.identification"
+                    placeholder="请输入内容"
+                  ></el-input>
                 </div>
               </div>
               <div class="record-row">
@@ -81,15 +116,10 @@
                   <span>*</span>
                 </div>
                 <div class="record-input">
-                  <el-select v-model="value" placeholder="请选择">
-                    <el-option
-                      v-for="item in options"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    >
-                    </el-option>
-                  </el-select>
+                  <el-input
+                    v-model="base.preferred_city"
+                    placeholder="请输入内容"
+                  ></el-input>
                 </div>
               </div>
             </div>
@@ -111,16 +141,10 @@
                   <span>*</span>
                 </div>
                 <div class="record-input">
-                  <el-input v-model="input" placeholder="请输入内容"></el-input>
-                </div>
-              </div>
-              <div class="record-row">
-                <div class="record-title">
-                  <span>学历</span>
-                  <span>*</span>
-                </div>
-                <div class="record-input">
-                  <el-input v-model="input" placeholder="请输入内容"></el-input>
+                  <el-input
+                    v-model="education.school"
+                    placeholder="请输入内容"
+                  ></el-input>
                 </div>
               </div>
               <div class="record-row">
@@ -129,15 +153,10 @@
                   <span>*</span>
                 </div>
                 <div class="record-input">
-                  <el-select v-model="value" placeholder="请选择">
-                    <el-option
-                      v-for="item in options"
-                      :key="item.value"
-                      :label="item.label"
-                      :value="item.value"
-                    >
-                    </el-option>
-                  </el-select>
+                  <el-input
+                    v-model="education.education_type"
+                    placeholder="请输入内容"
+                  ></el-input>
                 </div>
               </div>
               <div class="record-row">
@@ -146,7 +165,10 @@
                   <span>*</span>
                 </div>
                 <div class="record-input">
-                  <el-input v-model="input" placeholder="请输入内容"></el-input>
+                  <el-input
+                    v-model="education.major"
+                    placeholder="请输入内容"
+                  ></el-input>
                 </div>
               </div>
               <div class="record-row">
@@ -156,14 +178,14 @@
                 </div>
                 <div class="record-input">
                   <el-date-picker
-                    v-model="value2"
+                    v-model="education.start_time"
                     type="month"
                     placeholder="选择月"
                   >
                   </el-date-picker>
                   -
                   <el-date-picker
-                    v-model="value2"
+                    v-model="education.end_time"
                     type="month"
                     placeholder="选择月"
                   >
@@ -175,15 +197,10 @@
                     <span>*</span>
                   </div>
                   <div class="record-input">
-                    <el-select v-model="value" placeholder="请选择">
-                      <el-option
-                        v-for="item in options"
-                        :key="item.value"
-                        :label="item.label"
-                        :value="item.value"
-                      >
-                      </el-option>
-                    </el-select>
+                    <el-input
+                      v-model="education.score_rank"
+                      placeholder="请输入内容"
+                    ></el-input>
                   </div>
                 </div>
               </div>
@@ -206,7 +223,10 @@
                   <span>*</span>
                 </div>
                 <div class="record-input">
-                  <el-input v-model="input" placeholder="请输入内容"></el-input>
+                  <el-input
+                    v-model="work.company"
+                    placeholder="请输入内容"
+                  ></el-input>
                 </div>
               </div>
               <div class="record-row">
@@ -215,7 +235,10 @@
                   <span>*</span>
                 </div>
                 <div class="record-input">
-                  <el-input v-model="input" placeholder="请输入内容"></el-input>
+                  <el-input
+                    v-model="work.position"
+                    placeholder="请输入内容"
+                  ></el-input>
                 </div>
               </div>
               <div class="record-row">
@@ -225,14 +248,14 @@
                 </div>
                 <div class="record-input">
                   <el-date-picker
-                    v-model="value2"
+                    v-model="work.start_time"
                     type="month"
                     placeholder="选择月"
                   >
                   </el-date-picker>
                   -
                   <el-date-picker
-                    v-model="value2"
+                    v-model="work.end_time"
                     type="month"
                     placeholder="选择月"
                   >
@@ -246,10 +269,9 @@
                 </div>
                 <div class="record-input">
                   <el-input
-                    type="textarea"
                     :rows="2"
                     placeholder="请输入内容"
-                    v-model="textarea"
+                    v-model="work.desc"
                   >
                   </el-input>
                 </div>
@@ -273,7 +295,10 @@
                   <span>*</span>
                 </div>
                 <div class="record-input">
-                  <el-input v-model="input" placeholder="请输入内容"></el-input>
+                  <el-input
+                    v-model="project.name"
+                    placeholder="请输入内容"
+                  ></el-input>
                 </div>
               </div>
               <div class="record-row">
@@ -282,7 +307,10 @@
                   <span>*</span>
                 </div>
                 <div class="record-input">
-                  <el-input v-model="input" placeholder="请输入内容"></el-input>
+                  <el-input
+                    v-model="project.role"
+                    placeholder="请输入内容"
+                  ></el-input>
                 </div>
               </div>
               <div class="record-row">
@@ -292,14 +320,14 @@
                 </div>
                 <div class="record-input">
                   <el-date-picker
-                    v-model="value2"
+                    v-model="project.start_time"
                     type="month"
                     placeholder="选择月"
                   >
                   </el-date-picker>
                   -
                   <el-date-picker
-                    v-model="value2"
+                    v-model="project.end_time"
                     type="month"
                     placeholder="选择月"
                   >
@@ -313,10 +341,10 @@
                 </div>
                 <div class="record-input">
                   <el-input
-                    type="textarea"
+                    type="desc"
                     :rows="2"
                     placeholder="请输入内容"
-                    v-model="textarea"
+                    v-model="project.desc"
                   >
                   </el-input>
                 </div>
@@ -340,7 +368,10 @@
                   <span>*</span>
                 </div>
                 <div class="record-input">
-                  <el-input v-model="input" placeholder="请输入内容"></el-input>
+                  <el-input
+                    v-model="competition.name"
+                    placeholder="请输入内容"
+                  ></el-input>
                 </div>
               </div>
               <div class="record-row">
@@ -352,12 +383,12 @@
                     type="textarea"
                     :rows="2"
                     placeholder="请输入内容"
-                    v-model="textarea"
+                    v-model="competition.desc"
                   >
                   </el-input>
                 </div>
               </div>
-              <div class="record-row">
+              <!-- <div class="record-row">
                 <div class="record-title">
                   <span>竞赛名称</span>
                   <span>*</span>
@@ -379,7 +410,7 @@
                   >
                   </el-input>
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -403,7 +434,7 @@
                     type="textarea"
                     :rows="3"
                     placeholder="请输入内容"
-                    v-model="textarea"
+                    v-model="base.self_evaluation"
                   >
                   </el-input>
                 </div>
@@ -411,38 +442,183 @@
             </div>
           </div>
         </div>
+
+        <!-- 提交-底部 -->
+        <div class="demo-drawer__footer">
+          <el-button @click="cancle">取消</el-button>
+          <!-- <a href="/index/personal/resume/view"><el-button @click="cancle">取消</el-button></a> -->
+          <el-button type="primary" @click="updateResumeBody">确定</el-button>
+        </div>
       </form>
     </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "ResumeEdit",
   data() {
     return {
-      // 头像
-      imageUrl: "",
+      resumeId: "",
+      resumuAvatarAction: "",
+      resumuAttachAction: "",
+      base: {
+        name: "",
+        phone: "",
+        email: "",
+        identification: "",
+        preferred_city: "",
+        self_evaluation: "",
+        resume_attach_origin_name: ""
+      },
+      education: {
+        school: "",
+        education_type: "",
+        major: "",
+        start_time: "",
+        end_time: "",
+        score_rank: "",
+      },
+      work: {
+        position: "",
+        start_time: "",
+        end_time: "",
+        desc: "",
+      },
+      project: {
+        name: "",
+        role: "",
+        start_time: "",
+        end_time: "",
+        desc: "",
+      },
+      competition: {
+        name: "",
+        desc: "",
+      },
     };
   },
+  created() {
+    this.init();
+  },
   methods: {
-    // 头像
-    // 头像加载成功
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw);
+    init() {
+      this.getResumeId();
     },
-    // 头像上传前
+    // 获取resumeId
+    getResumeId() {
+      let userId = 14;
+      // let userId = this.$store.state.user.id;
+      axios({
+        method: "get",
+        url: "http://localhost:8082/resume/getResumeId",
+        params: {
+          userId: userId,
+        },
+      }).then((res) => {
+        res = res.data;
+        if (res.status == 0) {
+          this.resumeId = res.data.resumeId;
+          // 简历照片和附件上传地址
+          this.resumuAvatarAction = "http://localhost:8082/resume/uploadResumeAvatar?resumeId=" + this.resumeId;
+          this.resumuAttachAction = "http://localhost:8082/resume/uploadResumeAttach?resumeId=" + this.resumeId;
+          // 获取简历
+          this.getResumeBody();
+        }
+      });
+    },
+    // 查询简历
+    getResumeBody() {
+      axios({
+        method: "get",
+        url: "http://localhost:8082/resume/getResumeBody",
+        params: {
+          resumeId: this.resumeId,
+        },
+      }).then((res) => {
+        res = res.data;
+        if (res.status == 0) {
+          this.base = res.data.base;
+          this.education = res.data.education;
+          this.work = res.data.work;
+          this.competition = res.data.competition;
+          this.project = res.data.project;
+        }
+      });
+    },
+    // 修改简历-全部
+    updateResumeBody() {
+      axios({
+        method: "post",
+        url: "http://localhost:8082/resume/updateResumeBody",
+        data: {
+          resumeId: this.resumeId,
+          base: this.base,
+          education: this.education,
+          work: this.work,
+          project: this.project,
+          competition: this.competition,
+        },
+      }).then((res) => {
+        res = res.data;
+        if (res.status == 0) {
+          this.$message({
+            message: "简历修改成功!",
+            type: "success",
+          });
+        } else {
+          this.$message({
+            message: "简历修改失败!",
+            type: "error",
+          });
+        }
+      });
+    },
+    // 取消修改，返回页面
+    cancle() {
+      window.location.href = "/index/personal/resume/view";
+    },
+    // 简历附件上传成功
+    handleAttachSuccess(res, file) {
+      if (res.status == 0) {
+        this.$message({
+          message: "简历附件上传成功!",
+          type: "success",
+        });
+        this.base.resume_attach_origin_name = res.data.originAttachName;
+        console.log("resume_attach_origin_name=>" + this.base.resume_attach_origin_name);
+      } else {
+        this.$message({
+          message: "简历附件上传失败! " + res.msg,
+          type: "error",
+        });
+      }
+    },
+    // 简历照片上传成功
+    handleAvatarSuccess(res, file) {
+      if (res.status == 0) {
+        this.$message({
+          message: "简历照片上传成功!",
+          type: "success",
+        });
+        this.base.resume_avatar_url = res.data.newResumeAvatarUrl;
+        console.log("resume_avatar_url=>" + this.base.resume_avatar_url);
+      } else {
+        this.$message({
+          message: "简历照片上传失败! " + res.msg,
+          type: "error",
+        });
+      }
+    },
+    // 简历照片上传前
     beforeAvatarUpload(file) {
-      const isJPG = file.type === "image/jpeg";
       const isLt2M = file.size / 1024 / 1024 < 2;
-
-      if (!isJPG) {
-        this.$message.error("上传头像图片只能是 JPG 格式!");
-      }
       if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
+        this.$message.error("上传简历照片大小不能超过 2MB!");
       }
-      return i;
+      return isLt2M;
     },
   },
   mounted() {},
@@ -561,5 +737,16 @@ export default {
 .record-title-foucs {
   margin-left: 5px;
   color: #f54a45;
+}
+.demo-drawer__footer {
+  display: flex;
+  padding: 20px;
+  /* padding-right: 20px;
+  padding-left: 20px;
+  padding-bottom: 20px; */
+  /* position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0; */
 }
 </style>

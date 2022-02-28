@@ -1,36 +1,59 @@
 <template>
   <div id="resumeViewSection" class="resumeViewSection">
     <div class="resumeViewSection-title sofiaBold">{{ sectionTitle }}</div>
-    <div
-      class="resumeViewForm-listItem"
-      v-for="(sectionData, index) in sectionDataList"
-      :key="index"
-    >
-      <div class="atsx-row">
+    <div class="atsx-row">
         <div
           class="atsx-col atsx-col-auto resumeViewItem"
           v-for="(value, name, index) in sectionData"
           :key="index"
         >
-          <div class="resumeViewItem-title">{{ getKeyName(name) }}</div>
+          <div class="resumeViewItem-title">{{ getKeyName(name)}}</div>
           <div class="resumeViewItem-content">{{ value }}</div>
         </div>
       </div>
-    </div>
   </div>
 </template>
 
 <script>
 export default {
   name: "ResumeViewSection",
-  props: ["sectionTitle", "sectionDataList"],
+  props: ["sectionTitle", "sectionData"],
   data() {
     return {
       keyNames: {
-        major: "专业",
+        // major: "专业",
+        // school: "学校",
+        // education: "学历",
+        // educationType: "学历类型",
+        // 基础信息
+        name: "名字",
+        phone: "电话",
+        email: "邮箱",
+        identification: "身份证",
+        preferred_city: "意向城市",
+        self_evaluation: "自我评价",
+        // 教育背景
         school: "学校",
-        education: "学历",
-        educationType: "学历类型",
+        education_type: "学历类型",
+        major: "专业",
+        start_time: "开始时间",
+        end_time: "结束时间",
+        score_rank: "成绩排名",
+        // 工作经历
+        company: '公司',
+        position: "职位",
+        start_time: "开始时间",
+        end_time: "结束时间",
+        desc: "描述",
+        // 项目经历
+        name: "名字",
+        role: "角色",
+        start_time: "开始时间",
+        end_time: "结束时间",
+        desc: "描述",
+        // 竞赛
+        name: "名字",
+        desc: "描述",
       },
     };
   },
@@ -39,9 +62,13 @@ export default {
     getKeyName() {
       return function (keyName) {
         // console.log(keyName);
+        // return keyName != 'id' && keyName != 'resumeId' ? this.keyNames[keyName] : null;
         return this.keyNames[keyName];
       };
     },
+  },
+  created() {
+    
   },
   methods: {},
   mounted() {},

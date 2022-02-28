@@ -7,12 +7,12 @@
           <img src="@/assets/img/resume/resume2.png" alt="" />
         </div>
         <div class="resumeItem-text">
-          <p class="resumeItem-title sofiaBold">{{ attachmentName }}</p>
-          <p class="resumeItem-date">上传时间:{{ attachmentDate }}</p>
+          <p v-if='attachmentName' class="resumeItem-title sofiaBold">{{ attachmentName }}</p>
+          <p v-else class="resumeItem-title sofiaBold">未上传</p>
         </div>
       </div>
-      <div class="resumeItem-right">
-        <div class="resumeItem-download">
+      <div v-if='attachmentName' class="resumeItem-right">
+        <div class="resumeItem-download" @click="downloadAttach">
           <div class="resumeItem-downloadIcon">
             <img src="@/assets/img/resume/download-resume.png" alt="" />
           </div>
@@ -23,13 +23,26 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "ResumeAttachment",
   props: ["sectionTitle", "attachmentUrl", "attachmentName", "attachmentDate"],
   data() {
     return {};
   },
-  methods: {},
+  methods: {
+    // 下载简历
+    downloadAttach() {
+      // axios({
+      //   method: "get",
+      //   url: this.attachmentUrl
+      // }).then((res) => {
+      //   console.log('简历附件下载status:' + res.status);
+      // });
+      // window.open(this.attachmentUrl, "_blank");
+    }
+  },
   mounted() {},
 };
 </script>

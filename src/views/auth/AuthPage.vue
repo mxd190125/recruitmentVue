@@ -24,13 +24,14 @@
               class="other-icons-img"
               @click="baiduLogin"
           /></span>
-          <!-- QQ -->
-          <!-- <span class="other-icons-item"
+          <!-- 支付宝 -->
+          <span class="other-icons-item"
             ><img
-              src="~@/assets/img/auth/qq3.png"
+              src="~@/assets/img/auth/alipay3.png"
               alt=""
               class="other-icons-img"
-          /></span> -->
+              @click="alipayLogin"
+          /></span>
         </div>
       </div>
       <!-- 用户协议 -->
@@ -70,6 +71,20 @@ export default {
         }
       });
       // window.location.href = 'http://openapi.baidu.com/oauth/2.0/authorize?client_id=6PymiRqvIcnNpqGGajlm7nn1&response_type=code&redirect_uri=http://04528914x8.picp.vip/index&display=dialog&confirm_login=1'
+    },
+    // 第三方登录-支付宝
+    alipayLogin() {
+      axios({
+        method: "get",
+        url: 'http://localhost:8081/auth/alipay/login'
+      }).then((res)=>{
+        res = res.data;
+        if (res.status == 0) {
+          console.log("url=>" + res.msg);
+          // 跳转至支付宝授权页面
+          window.location.href = res.msg;
+        }
+      });
     }
   },
   mounted() {},

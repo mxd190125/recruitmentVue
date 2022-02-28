@@ -5,17 +5,16 @@
         class="avatar"
         width="40"
         height="40"
-        :alt="user.userName"
-        src="~@/assets/logo.png"
+        :alt="user.username"
+        :src="user.avatarUrl"
       />
-      <p class="name">{{ user.userName }}</p>
+      <p class="name">{{ user.username }}</p>
     </header>
     <footer>
       <input
         class="search"
         type="text"
         placeholder="search user..."
-        v-model="searchKey"
       />
     </footer>
   </div>
@@ -25,20 +24,14 @@
 export default {
   name: "MyCard",
   props: {
-    user: Object,
-    searchKey: {
-      type: Object,
-      default() {
-        return {};
-      },
-    },
+    user: Object
   },
   data() {
     return {};
   },
   methods: {},
   mounted() {
-    console.log("我的卡片加载 userId:" + this.user.id);
+    
   },
 };
 </script>

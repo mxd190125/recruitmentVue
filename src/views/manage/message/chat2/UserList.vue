@@ -11,10 +11,10 @@
           class="avatar"
           width="30"
           height="30"
-          :alt="item.userName"
+          :alt="item.username"
           :src="item.avatarUrl"
         />
-        <p class="name">{{ item.userName }}</p>
+        <p class="name">{{ item.username }}</p>
       </li>
     </ul>
   </div>
@@ -46,7 +46,7 @@ export default {
       //   }
       // this.$emit("update:sessionId", this.userList.indexOf(value).id);
       console.log(
-        "选择了sessionId:" + this.session.userId + " userName:" + value.userName
+        "选择了sessionId:" + this.session.userId + " userName:" + value.username
       );
     },
   },
@@ -56,7 +56,7 @@ export default {
   },
   filters: {
     search(list) {
-      return list.filter((item) => item.userName.indexOf(this.searchKey) > -1);
+      return list.filter((item) => item.username.indexOf(this.searchKey) > -1);
     },
   },
 };

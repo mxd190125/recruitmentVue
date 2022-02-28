@@ -1,9 +1,9 @@
 <template>
-  <div class="message-panel-class" v-scroll-bottom="messages">
+  <div class="message-panel-class" ref="chatContent">
     <ul>
       <li v-for="message in messages" :key="message.id">
         <p class="time">
-          <span>{{ message.date | time }}</span>
+          <span>{{ message.time }}</span>
         </p>
         <div class="main" :class="{ self: isSelf(message) }">
           <img
@@ -12,7 +12,7 @@
             height="30"
             :src="message | avatar(user, sessionUser)"
           />
-          <div class="text">{{ message.text }}</div>
+          <div class="text">{{ message.msg }}</div>
         </div>
       </li>
     </ul>
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import Vue from 'vue'
+import Vue from "vue";
 
 export default {
   name: "MessagePanel",
@@ -49,35 +49,28 @@ export default {
   },
   methods: {
     isSelf(message) {
-      return message.userId == this.user.id;
+      return message.from == this.user.id;
+    },
+    scrollToBottom() {
+      this.$nextTick(() => {
+        this.$refs.chatContent.scrollTop = this.$refs.chatContent.scrollHeight;
+      });
     },
   },
   mounted() {
-    console.log("消息面板加载.... user:" + this.user.id);
+    this.scrollToBottom();
+  },
+  updated() {
+    this.scrollToBottom();
   },
   filters: {
     // 筛选出用户头像
     avatar(message, user, sessionUser) {
       // 如果是自己发的消息显示登录用户的头像
-      let _user = message.userId === user.id ? user : sessionUser;
+      let _user = message.from === user.id ? user : sessionUser;
       return _user && _user.avatarUrl;
     },
-    // 将日期过滤为 hour:minutes
-    time(date) {
-      if (typeof date === "string") {
-        date = new Date(date);
-      }
-      return date.getHours() + ":" + date.getMinutes();
-    },
-  },
-  directives: {
-    // 发送消息后滚动到底部
-    "scroll-bottom"() {
-      Vue.nextTick(() => {
-        this.el.scrollTop = this.el.scrollHeight - this.el.clientHeight;
-      });
-    },
-  },
+  }
 };
 </script>
 

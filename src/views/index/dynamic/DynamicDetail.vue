@@ -107,18 +107,16 @@ export default {
     },
     // 是否已点赞
     isGoodArticle() {
-      if (this.token == '') {
-        this.$message.error("未登录，无法点赞");
+      if (this.$store.state.user.id == null) {
+        this.$message.error("未登录,无法获取点赞详情");
         return;
       }
       axios({
-        headers: {
-          Authorization: this.token,
-        },
         method: "get",
         url: "http://localhost:8082/article/isGoodArticle",
         params: {
           articleId: this.articleId,
+          userId: this.$store.state.user.id,
         },
       }).then((res) => {
         res = res.data;
@@ -129,15 +127,16 @@ export default {
     },
     // 点赞操作
     doGoodArticle() {
-      // let token = this.$store.getters.getToken;
+      if (this.$store.state.user.id == null) {
+        this.$message.error("未登录,无法点赞");
+        return;
+      }
       axios({
-        headers: {
-          Authorization: this.token,
-        },
         method: "get",
         url: "http://localhost:8082/article/doArticleGood",
         params: {
           articleId: this.articleId,
+          userId: this.$store.state.user.id
         },
       }).then((res) => {
         res = res.data;

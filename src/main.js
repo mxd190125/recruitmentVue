@@ -7,6 +7,8 @@ import ElementUI from 'element-ui'
 import {Message} from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
+const uuid = require('uuid')
+
 Vue.config.productionTip = false
 Vue.use(ElementUI)
 Vue.prototype.$messgae=Message

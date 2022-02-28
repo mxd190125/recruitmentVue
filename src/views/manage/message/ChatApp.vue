@@ -11,7 +11,12 @@
         :userList="userList"
         :messages="messages"
       />
-      <message-send :session="session" :user="user" :messages="messages" />
+      <message-send
+        :session="session"
+        :user="user"
+        :messages="messages"
+        :socket="socket"
+      />
     </div>
   </div>
 </template>
@@ -21,6 +26,9 @@ import MessagePanel from "./chat2/MessagePanel.vue";
 import MessageSend from "./chat2/MessageSend.vue";
 import MyCard from "./chat2/MyCard.vue";
 import UserList from "./chat2/UserList.vue";
+import axios from "axios";
+
+const uuid = require("uuid");
 
 export default {
   components: { MyCard, UserList, MessageSend, MessagePanel },
@@ -33,59 +41,123 @@ export default {
       },
       user: {
         id: 1,
-        userName: "冬雪是你",
-        avatarUrl:
-          "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fup.enterdesk.com%2Fedpic%2F55%2F34%2F61%2F553461a1d8bb07b1026a7eeff17319e0.jpg&refer=http%3A%2F%2Fup.enterdesk.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1644593291&t=a79c9a6eac1095e3ef9924114860bc2e",
+        username: "",
+        authorities: [],
+        avatarUrl: "",
       },
-      userList: [
-        {
-          id: 2,
-          userName: "詹姆斯",
-          avatarUrl:
-            "https://img1.baidu.com/it/u=1925715390,133119052&fm=253&fmt=auto&app=138&f=JPEG?w=400&h=400",
-        },
-        {
-          id: 3,
-          userName: "霍华德",
-          avatarUrl:
-            "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fup.enterdesk.com%2Fedpic%2F55%2F34%2F61%2F553461a1d8bb07b1026a7eeff17319e0.jpg&refer=http%3A%2F%2Fup.enterdesk.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1644593291&t=a79c9a6eac1095e3ef9924114860bc2e",
-        },
-        {
-          id: 4,
-          userName: "戴维斯",
-          avatarUrl:
-            "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fup.enterdesk.com%2Fedpic%2F55%2F34%2F61%2F553461a1d8bb07b1026a7eeff17319e0.jpg&refer=http%3A%2F%2Fup.enterdesk.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1644593291&t=a79c9a6eac1095e3ef9924114860bc2e",
-        },
-        {
-          id: 5,
-          userName: "威少",
-          avatarUrl:
-            "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fup.enterdesk.com%2Fedpic%2F55%2F34%2F61%2F553461a1d8bb07b1026a7eeff17319e0.jpg&refer=http%3A%2F%2Fup.enterdesk.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1644593291&t=a79c9a6eac1095e3ef9924114860bc2e",
-        },
-      ],
-      messages: [
-        {
-          id: 1,
-          text: "我是詹姆斯。。。",
-          date: new Date(),
-          userId: 2,
-        },
-        {
-          id: 2,
-          text: "我是马雪冬",
-          date: new Date(),
-          userId: 1,
-        },
-        {
-          id: 3,
-          text: "你好啊。。。",
-          date: new Date(),
-          userId: 2,
-        },
-      ],
+      userList: [],
+      messages: [],
+
+      wsUrl: "ws://localhost:8084/server/chat",
+      socket: "",
     };
   },
-  methods: {},
+  watch: {
+    'session.userId': {
+      handler: function() {
+        this.getChatMessageList(this.user.id, this.session.userId);
+      }
+    }
+  },
+  created() {
+    // this.user.id = "14";
+    // this.user.username = "冬雪是你";
+    // this.user.avatarUrl =
+    //   "https://tfs.alipayobjects.com/images/partner/TB1VF.oaz4ADuNjm2EPXXc__pXa";
+    this.user.id = this.$store.state.user.id;
+    this.user.username = this.$store.state.user.username;
+    this.user.avatarUrl = this.$store.state.user.avatarUrl;
+    this.user.authorities = this.$store.state.user.authorities;
+    this.init();
+  },
+  methods: {
+    init() {
+      console.log("开始连接websocket..");
+      if (typeof WebSocket === "undefined") {
+        console.log("websocket undefined...");
+        return;
+      }
+      this.socket = new WebSocket(this.wsUrl);
+      this.socket.onopen = this.open;
+      this.socket.onerror = this.error;
+      this.socket.onmessage = this.message;
+      this.socket.onclose = this.close;
+    },
+    getChatUserList() {
+      axios({
+        method: "get",
+        url:
+          "http://localhost:8083/chat/getChatUserList",
+        params: {
+          userId: this.user.id,
+          roleName: this.user.authorities[0].authority
+        }
+      }).then((res) => {
+        res = res.data;
+        if (res.status == 0) {
+          this.userList = res.data;
+        }
+      });
+    },
+    getChatMessageList(fromId, toId) {
+      console.log("fromId:" + fromId + " toId:" + toId)
+      axios({
+        method: "get",
+        url: "http://localhost:8083/chat/getChatMessageList",
+        params: {
+          fromId: fromId,
+          toId: toId,
+        },
+      }).then((res) => {
+        res = res.data;
+        if (res.status == 0) {
+          this.messages = res.data;
+        }
+      });
+    },
+    open(e) {
+      let msg = {
+        id: uuid.v1(),
+        from: this.user.id,
+        to: "",
+        type: "1",
+        msg: "上线1",
+        time: "",
+      };
+      this.sendMsg(JSON.stringify(msg));
+      this.getChatUserList();
+      console.log("连接成功!");
+    },
+    close(e) {
+      console.log("断开连接");
+    },
+    error(e) {
+      console.log("连接失败!");
+      this.$message.error("消息服务器连接失败!");
+    },
+    message(e) {
+      let backMsg = {
+        id: JSON.parse(e.data).id,
+        type: JSON.parse(e.data).type,
+        msg: JSON.parse(e.data).msg,
+        from: JSON.parse(e.data).from,
+        to: JSON.parse(e.data).to,
+      }
+      console.log("接受消息type:" + JSON.parse(e.data).type);
+      if (backMsg.type == 2) {
+        this.messages.push(backMsg);
+      }
+      console.log("服务端发来消息:" + e.data);
+    },
+    sendMsg(msg) {
+      if (this.socket.readyState == WebSocket.OPEN) {
+        this.socket.send(msg);
+        console.log("msg:" + msg);
+      } else {
+        this.$message.error("socket未连接!");
+      }
+    },
+  },
   mounted() {},
 };
 </script>

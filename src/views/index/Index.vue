@@ -56,8 +56,8 @@
           <!-- 登录成功 -->
           <el-submenu index="7" v-if="isOnline">
             <template slot="title">
-              <img :src="avatarUrl" class="avatar" alt="">
-              {{username}}
+              <img :src="avatarUrl" class="avatar" alt="" />
+              {{ username }}
             </template>
             <router-link
               to="/index/personal/resume/view"
@@ -93,7 +93,7 @@
       >
         <router-view />
       </el-main>
-      
+
       <div id="footer">
         <div class="footer-container tiktok-footer">
           <div class="footer-content-wrapper">
@@ -137,13 +137,15 @@
 </template>    
 
 <script>
-import axios from 'axios';
+import axios from "axios";
 export default {
   name: "Index",
   data() {
     return {
+      id: "",
       username: "",
-      avatarUrl: '',
+      authorities: [],
+      avatarUrl: "",
       activeIndex: "1",
     };
   },
@@ -153,21 +155,31 @@ export default {
     },
   },
   created() {
+    this.id = this.$store.state.user.id;
+    this.username = this.$store.state.user.username;
+    this.authorities = this.$store.state.user.authorities;
+    this.avatarUrl = this.$store.state.user.avatarUrl;
+    console.log("this.username:", this.username);
+    console.log("this.authorities:", this.authorities);
+    console.log("this.avatarUrl:", this.avatarUrl);
     let code = this.$route.query.code;
-    if (code != null && code != "") {
-      this.handleBaiduLogin(code);
+    let auth_code = this.$route.query.auth_code;
+    let state = this.$route.query.state;
+    if (code != null && code != "" && state != null && state != "") {
+      console.log("进行百度登录");
+      console.log("code:" + code);
+      console.log("state:" + state);
+      this.handleLogin(code, state);
     }
-    let user = this.$store.getters.getUser;
-    if (user != null) {
-      this.username = user.username;
-      this.avatarUrl = user.avatarUrl;
-      console.log("this.username:", this.username)
-      console.log("this.avatarUrl:", this.avatarUrl)
-      console.log("token=>" + user.token);
+    if (auth_code != null && auth_code != "" && state != null && state != "") {
+      console.log("进行支付宝登录");
+      console.log("auth_code:" + auth_code);
+      console.log("state:" + state);
+      this.handleLogin(auth_code, state);
     }
   },
   methods: {
-     openSucess(str) {
+    openSucess(str) {
       this.$message({
         message: str,
         type: "success",
@@ -176,33 +188,61 @@ export default {
     openFail(str) {
       this.$message.error(str);
     },
-    // 处理百度授权完成后的登录
-    handleBaiduLogin(code) {
-      console.log("code:" + code);
+    // 处理第三方授权完成后的登录
+    handleLogin(code, state) {
+      let loginUrl = "";
+      if (state.startsWith("baidu")) {
+        loginUrl = "http://localhost:8081/auth/baidu/callback?code=" + code;
+      }
+      if (state.startsWith("aplipay")) {
+        loginUrl = "http://localhost:8081/auth/alipay/callback?code=" + code;
+      }
+      console.log("loginUrl=>" + loginUrl);
       axios({
         method: "get",
-        url: 'http://localhost:8081/auth/baidu/callback?code='+code 
-      }).then((res)=>{
+        url: loginUrl,
+      }).then((res) => {
         res = res.data;
         if (res.status == 1000) {
           // 登录成功
+          console.log("登录成功!");
           this.openSucess(res.msg);
           let user = {
+            id: res.data.info.id,
             username: res.data.info.username,
+            password: res.data.info.password,
+            isBaidu: res.data.info.isBaidu,
+            isAlipay: res.data.info.isAlipay,
+            authorities: res.data.info.authorities,
             avatarUrl: res.data.info.avatarUrl,
             token: res.data.token,
-          }
+          };
+          console.log("user=> " + user);
           this.$store.commit("setUser", user);
           // this.$store.commit("setToken", res.data.token);
-          let token = this.$store.getters.getToken;
+          let getUser = this.$store.getters.getUser;
+          if (getUser != null) {
+            this.id = getUser.id;
+            this.username = getUser.username;
+            this.authorities = getUser.authorities;
+            this.avatarUrl = getUser.avatarUrl;
+            console.log("this.id:", this.id);
+            console.log("this.username:", this.username);
+            console.log("this.authorities:", this.authorities);
+            console.log("this.avatarUrl:", this.avatarUrl);
+            console.log("token=>" + getUser.token);
+          }
           return;
-        }
-        else if (res.status == 1004 || res.status == 1003 || res.status == 1001) {
+        } else if (
+          res.status == 1004 ||
+          res.status == 1003 ||
+          res.status == 1001 ||
+          res.status == 1002
+        ) {
           this.msg = res.msg;
           return;
-        }
-        else if(res.status == 400) {
-          console.log(res.msg)
+        } else if (res.status == 400) {
+          console.log(res.msg);
         }
       });
     },
@@ -211,12 +251,15 @@ export default {
       console.log(key, keyPath);
     },
     logOut() {
-      this.$store.commit("setUser", null);
-      this.username = '';
-      this.avatarUrl = '';
-      this.openSucess('成功退出!')
-      window.location.href='http://localhost:8080/auth/login';
-    }
+      this.$store.state.user.username = "";
+      this.$store.state.user.avatarUrl = "";
+      this.$store.state.user.password = "";
+      this.$store.state.user.token = "";
+      this.username = "";
+      this.avatarUrl = "";
+      this.openSucess("成功退出!");
+      window.location.href = "http://localhost:8080/auth/login";
+    },
   },
 };
 </script>
@@ -320,8 +363,8 @@ h3 {
 }
 
 .avatar {
-  height: 40px; 
-  margin-top: 8px; 
-  margin-bottom: 5px
+  height: 40px;
+  margin-top: 8px;
+  margin-bottom: 5px;
 }
 </style>

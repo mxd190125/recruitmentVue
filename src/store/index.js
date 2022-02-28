@@ -9,11 +9,16 @@ export default new Vuex.Store({
   plugins: [createPersistedState()],
   state: {
     user: {
+      id: "",
       username: '',
+      password: '',
+      isBaidu: '',
+      isAlipay: '',
       avatarUrl: '',
       token: '',
+      authorities: []
       // photoUrl: ''
-  }
+    }
   },
   getters: {
     getUser(state) {
