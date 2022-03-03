@@ -40,7 +40,7 @@ export default {
         userId: "4",
       },
       user: {
-        id: 1,
+        id: '',
         username: "",
         authorities: [],
         avatarUrl: "",
@@ -96,6 +96,9 @@ export default {
         res = res.data;
         if (res.status == 0) {
           this.userList = res.data;
+          // 窗口默认第一个页面
+          this.session.userId = this.userList[0].id;
+          // console.log('初始化session.userId=' + this.session.userId);
         }
       });
     },

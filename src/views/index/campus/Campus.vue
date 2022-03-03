@@ -168,10 +168,11 @@ export default {
     // 跳转到详情页面
     showPositonDetail(position) {
       console.log("跳转到职位详情页面...." + "id:" + position.id);
-      this.$router.push({
-        path: "/position/showPositionDetail",
-        query: { position: position },
-      });
+      window.location.href = '/position/showPositionDetail?positionId=' + position.id;
+      // this.$router.push({
+      //   path: "/position/showPositionDetail",
+      //   query: { positionId: position.id },
+      // });
     },
     // 分页事件
     // 每页数量变动事件
@@ -204,7 +205,8 @@ export default {
   transform-style: preserve-3d;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  background-image: url("https://lf26-static.bytednsdoc.com/obj/eden-cn/ha_lm_lswvlw/ljhwZthlaukjlkulzlp/portal/campus/427bannernew.png");
+  /* background-image: url("https://lf26-static.bytednsdoc.com/obj/eden-cn/ha_lm_lswvlw/ljhwZthlaukjlkulzlp/portal/campus/427bannernew.png"); */
+  background-image: url("https://news.cdu.edu.cn/attachment/202201/20220107173428n911prjWA5_thumb_2.jpg");
 }
 
 /* 搜索 */

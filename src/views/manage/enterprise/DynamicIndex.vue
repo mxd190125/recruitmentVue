@@ -171,21 +171,7 @@ export default {
   name: "DynamicIndex",
   data() {
     return {
-      articleList: [
-        {
-          id: 1,
-          title: "休闲鞋",
-          createTime: "2022-02-25 18:00:10",
-          text: "sdsssss谁谁谁谁谁谁",
-          textAbstract: "nobnobonoboboboboboboboob",
-          goodNum: 99,
-          viewNum: 67,
-          wordNum: 786,
-          discussNum: 56,
-          userId: 1,
-          username: "马雪冬",
-        },
-      ],
+      articleList: [],
       formInline: {
         title: "",
         username: "",

@@ -96,6 +96,10 @@ const routes = [
       {
         path: '/index/personal/application/view',
         component: ApplicationRecord
+      },
+      {
+        path: '/index/personal/index',
+        component: PersonalIndex
       }
     ]
   },

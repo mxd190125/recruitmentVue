@@ -12,7 +12,7 @@
       >
         <div id="logo-img">
           <img
-            src="~@/assets/img/index/baidu-logo4.png"
+            src="~@/assets/img/index/logo.png"
             style="height: 40px; margin-top: 8px; margin-bottom: 5px"
             alt=""
           />
@@ -65,7 +65,12 @@
             >
               <el-menu-item index="7-1">我的简历</el-menu-item>
             </router-link>
-            <el-menu-item index="7-2">我的账号</el-menu-item>
+            <router-link
+              to="/index/personal/index"
+              style="text-decoration: none"
+            >
+              <el-menu-item index="7-2">我的账号</el-menu-item>
+            </router-link>
             <router-link
               to="/index/personal/application/view"
               style="text-decoration: none"
@@ -155,6 +160,7 @@ export default {
     },
   },
   created() {
+    // this.activeIndex = this.$store.state.activeIndex;
     this.id = this.$store.state.user.id;
     this.username = this.$store.state.user.username;
     this.authorities = this.$store.state.user.authorities;

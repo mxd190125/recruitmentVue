@@ -66,7 +66,7 @@ export default {
         res = res.data;
         if (res.status == 0) {
           console.log("url=>" + res.msg);
-          // 跳转至百度授权页面
+          // 跳转至百度授权页面 msg为授权页面URL
           window.location.href = res.msg;
         }
       });
@@ -81,7 +81,7 @@ export default {
         res = res.data;
         if (res.status == 0) {
           console.log("url=>" + res.msg);
-          // 跳转至支付宝授权页面
+          // 跳转至支付宝授权页面 msg为授权页面URL
           window.location.href = res.msg;
         }
       });

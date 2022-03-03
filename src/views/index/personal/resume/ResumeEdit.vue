@@ -509,8 +509,8 @@ export default {
     },
     // 获取resumeId
     getResumeId() {
-      let userId = 14;
-      // let userId = this.$store.state.user.id;
+      // let userId = 14;
+      let userId = this.$store.state.user.id;
       axios({
         method: "get",
         url: "http://localhost:8082/resume/getResumeId",

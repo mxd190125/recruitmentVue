@@ -4,25 +4,25 @@
       <!-- 职位信息 -->
       <div class="sofiaBold title">
         <div class="applicationListItem-name applicationListItem-name-text">
-          后端开发工程师-电商业务
+          {{post_info.positionName}}
         </div>
       </div>
       <div class="subTitle__2zDJc applicationListItem-subTitle">
         <div data-v-4bddac78="" class="position-item-sub-title">
-          北京
+          {{post_info.cityName}}
           <div data-v-4bddac78="" class="lineDevider"></div>
-          技术
+          {{post_info.positionTypeName}}
           <div data-v-4bddac78="" class="lineDevider"></div>
-          校招
+          {{post_info.recruitTypeName}}
           <div data-v-4bddac78="" class="lineDevider"></div>
-          若干
+          {{post_info.num}}
           <div data-v-4bddac78="" class="lineDevider"></div>
-          2021年11月9日
+          {{post_info.createTime}}
         </div>
       </div>
       <!-- 应聘进度 -->
       <div class="step-container">
-        <div class="step">
+        <div class="step" v-for="(process, index) in process_list" :key="index">
           <div class="icon-wrapper">
             <img
               src="@/assets/img/application/pass.png"
@@ -30,25 +30,12 @@
               class="icon-wrapper-img"
             />
           </div>
-          <div class="action">投递简历</div>
-          <div class="date">2021-08-15</div>
-        </div>
-        <!-- <div class="stepDivider"></div> -->
-
-        <div class="step">
-          <div class="icon-wrapper">
-            <img
-              src="@/assets/img/application/pass.png"
-              alt=""
-              class="icon-wrapper-img"
-            />
-          </div>
-          <div class="action">投递简历</div>
-          <div class="date">2021-08-15</div>
+          <div class="action">{{process.statusName}}</div>
+          <div class="date">{{process.operateTime}}</div>
         </div>
         <!-- <div class="stepDivider"></div> -->
       </div>
-      <div class="position-item-sub-title">2021-08-15 09:58 投递</div>
+      <div class="position-item-sub-title">{{delivery_time}} 投递</div>
     </div>
   </div>
 </template>
@@ -56,6 +43,7 @@
 <script>
 export default {
   name: "ApplicationItem",
+  props: ["post_info", "process_list", "delivery_time"],
   data() {
     return {};
   },

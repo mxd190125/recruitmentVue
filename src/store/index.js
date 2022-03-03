@@ -18,7 +18,8 @@ export default new Vuex.Store({
       token: '',
       authorities: []
       // photoUrl: ''
-    }
+    },
+    activeIndex: "",
   },
   getters: {
     getUser(state) {
